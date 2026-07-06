@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chimney Sweeper — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>The Chimney Sweeper</h1>
+  <p>William Blake — 74 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["Who is the English Romantic poet and engraver who wrote 'The Chimney Sweeper'?", "William Blake."],
+["In which 1789 collection was the poem 'The Chimney Sweeper' first published?", "Songs of Innocence."],
+["What major historical era served as the background for the rampant child labor described in the poem?", "The Industrial Revolution."],
+["Blake's two companion volumes, Songs of Innocence and Songs of Experience, explore themes from the contrasting perspectives of childhood purity and _____.", "Adult corruption."],
+["What personal tragedy does the narrator recount happening when he was very young?", "The death of his mother."],
+["To what occupation was the narrator sold by his father?", "Chimney sweeping."],
+["Explain the verbal irony in the street-cry ''weep! 'weep! 'weep! 'weep!'.", "It captures both the child's mispronunciation of 'sweep' and his actual state of sorrow."],
+["What does the phrase 'in soot I sleep' signify about the sweepers' living conditions?", "It illustrates their constant exposure to filth and lack of proper hygiene or bedding."],
+["Whose head was shaved because it 'curled like a lamb's back'?", "Tom Dacre."],
+["What is the symbolic implication of comparing Tom Dacre's hair to a lamb's back?", "It associates the child with biblical innocence and the concept of a sacrificial victim."],
+["What hollow consolation does the narrator offer Tom regarding his shaved head?", "He claims that the soot can no longer spoil Tom's white hair."],
+["In Tom Dacre's dream, what specific object are thousands of sweepers locked inside?", "Coffins of black."],
+["What do the 'coffins of black' symbolize in the context of the boys' daily lives?", "The narrow, dark, and potentially lethal chimneys where the children work."],
+["Who arrives in the dream with a 'bright key' to liberate the children?", "An Angel."],
+["Identify the natural imagery used to describe the children's activities after being freed in the dream.", "They run down a green plain, wash in a river, and shine in the sun."],
+["What condition does the Angel set for Tom to 'have God for his father'?", "Tom must be a 'good boy'."],
+["How does the Angel's promise of divine fatherhood function as a religious critique?", "It presents God as a substitute for the human father who abandoned or sold the child."],
+["Describe the contrast in setting between the dream in Stanza 5 and the reality in Stanza 6.", "The dream is bright and joyful, while the reality is a dark and cold morning."],
+["The final line of the poem is: 'So if all do their duty, they need not fear _____.'", "Harm."],
+["Why is the poem's final line considered one of the most searing examples of irony in Romantic poetry?", "It suggests safety through duty to a child who has already been severely harmed by society."],
+["What is the primary rhyme scheme used throughout the six stanzas of 'The Chimney Sweeper'?", "AABB."],
+["How does the nursery-rhyme cadence of the poem support Blake's social critique?", "The cheerful rhythm mimics the form of moral indoctrination while describing horrific exploitation."],
+["Which three interlocking institutions does Blake's poem target as complicit in child abuse?", "The family, the church, and the state."],
+["What does Blake's concept of 'Innocence' represent in this poem?", "A state of extreme vulnerability where the victim cannot recognize their own exploitation."],
+["How does the mention of names like 'Dick, Joe, Ned, and Jack' affect the reader's perception of the sweepers?", "It humanizes the thousands of anonymous victims by giving them individual identities."],
+["In Stanza 1, what does the direct address 'your chimneys I sweep' imply about the reader?", "It suggests the reader's complicity as a consumer benefiting from child labor."],
+["What does the act of shaving Tom's 'white hair' symbolize?", "The violent erasure of childhood identity and purity by an industrial system."],
+["How does the poem's circular structure (reality to dream and back to reality) reinforce its message?", "It demonstrates that the dream provides only temporary psychological relief without changing material conditions."],
+["What is the 'ideological trap' Blake exposes through the Angel's message to Tom?", "The promise of future spiritual rewards used to pacify the poor and ensure their submission."],
+["How does the use of the word 'duty' in the final couplet relate to 18th-century social control?", "It weaponizes the language of civic virtue to justify the continued exploitation of children."],
+["Define 'alliteration' and provide one example from the first stanza of the poem.", "The repetition of consonant sounds, as seen in the phrase 'soot I sleep'."],
+["What does the 'soot' symbolize on a moral and social level throughout the poem?", "The pervasive corruption and pollution that stains both the children and the society that exploits them."],
+["Blake was largely self-taught and developed a unique printing method known as _____.", "Illuminated printing."],
+["How did Blake's contemporaries generally view his radical artistic and political visions?", "He was largely dismissed as an eccentric during his own lifetime."],
+["According to critics like Harold Bloom, Blake should be read as a systematic _____ thinker rather than just a lyric poet.", "Political."],
+["What is the significant difference between the 'rising' in Blake's poem and Maya Angelou's 'Still I Rise'?", "Blake's characters rise passively in a dream, whereas Angelou's speaker rises actively in reality."],
+["How does the narrator's 'unreliable' perspective enhance the poem's moral force?", "The gap between the child's trusting acceptance and the reader's horror creates a devastating indictment."],
+["What was the purpose of the Chimney Sweepers' Act of 1788 in relation to Blake's poem?", "It was an early, largely inadequate attempt to regulate the trade that Blake criticized."],
+["Why is the dream's depiction of washing in a river considered a 'counter-image' to the rest of the poem?", "It contrasts the children's actual state of being covered in soot with a vision of total purity."],
+["The poem's anapestic rhythm typically creates a _____ feeling that contrasts with its dark subject matter.", "Sing-song or lighthearted."],
+["Which specific figure of speech is used in the line 'coffins of black' to represent the chimneys?", "Symbolism."],
+["What does the narrator mean when he says Tom was 'happy and warm' despite the cold morning?", "The internal false hope provided by the dream has temporarily blinded him to his physical suffering."],
+["In Stanza 1, the phrase 'while yet my tongue / Could scarcely cry' emphasizes the narrator's _____.", "Extreme youth."],
+["What is the theological pivot of the poem found in Stanza 5?", "The Angel's promise that God will be Tom's father if he is a good boy."],
+["How does the 'white hair' mentioned in Stanza 2 contrast with the 'soot' mentioned throughout the poem?", "White represents original innocence, while soot represents the corruption of experience."],
+["According to the L3 Analytical Summary, what is the 'central analytical target' of Blake's poem?", "The ideological function of religious hope as a mechanism of social control."],
+["What does the 'bright key' used by the Angel likely represent in the dream vision?", "The possibility of liberation that is only accessible through divine or supernatural means."],
+["The narrator's matter-of-fact tone about being sold by his father highlights the _____ of child exploitation in that era.", "Normalization."],
+["In the dream, the sweepers 'rise upon clouds' after leaving their _____ behind.", "Bags."],
+["Why is the Angel's promise considered 'conditional'?", "It requires the child to 'be a good boy' and do his duty to earn God's favor."],
+["What is the effect of using common names like Joe and Ned in the poem?", "It emphasizes that child exploitation was a widespread, collective tragedy affecting many ordinary boys."],
+["How does 'The Chimney Sweeper' anticipate modern social justice concerns?", "It addresses issues of consumer complicity and the exploitation of the voiceless in labor chains."],
+["The narrator's act of comforting Tom Dacre is an example of what theme within the poem?", "Friendship and support among the oppressed."],
+["In the context of the poem, what does 'Experience' typically represent in contrast to 'Innocence'?", "The recognition of systemic corruption and the loss of childhood naivety."],
+["What does the line 'wash in a river and shine in the Sun' visually represent for the boys?", "A complete cleansing of the industrial filth that defines their daily lives."],
+["What is the structural function of Stanza 6 in the overall narrative arc?", "It brings the reader back to the grim waking reality, showing that the dream changed nothing."],
+["Why might a reader who takes the final couplet literally be 'implicated' by Blake?", "They are choosing to accept the same shallow moral justifications that permit the child's suffering."],
+["The narrator says his father sold him when he could 'scarcely cry'. This reflects the child's lack of _____.", "Political or social agency."],
+["Which figure of speech is demonstrated by the phrase 'curled like a lamb's back'?", "Simile."],
+["In the dream sequence, what does leaving the 'bags' behind symbolize?", "The abandonment of the tools and burdens of their labor."],
+["What is the 'double indictment' found in the opening stanza?", "The failure of the family (selling the child) and the failure of the economy (the chimney trade)."],
+["What is the primary aesthetic effect of the AABB rhyme scheme in this specific poem?", "It creates a deceptive simplicity that masks the underlying horror of the subject matter."],
+["Why does Blake focus on the 'white hair' of Tom Dacre?", "To highlight the stark visual contrast between purity and the black soot of the trade."],
+["The Angel's message can be described as 'false consolation' because it defer justice to the _____.", "Afterlife."],
+["How does the poem characterize the relationship between 'duty' and 'harm' in its final line?", "It ironically suggests they are mutually exclusive, despite the children being harmed precisely by their duty."],
+["What does the phrase 'locked up in coffins of black' suggest about the children's physical mobility?", "They are confined and entombed by their work, both figuratively and literally."],
+["How does Blake's use of 'pathos' in the first stanza affect the reader?", "It immediately establishes emotional sympathy for the child who lost his mother and was sold."],
+["What does the narrator's happiness in the cold morning suggest about his psychological state?", "He has internalized the system's values and is sustained by illusory hope."],
+["In 18th-century England, boys as young as _____ were often sold as chimney sweepers.", "Four or five years old."],
+["What is the 'triple indictment' described in the critical context of Level 4?", "A structural critique of the family, the church, and the state."],
+["The phrase 'naked and white' in the dream sequence represents a return to what state?", "The boys' original, uncorrupted state of nature."],
+["How does the title 'Songs of Innocence' contribute to the 'architectural irony' of the collection?", "It sets up a pastoral expectation that is brutally subverted by the poem's dark social reality."],
+["Which character in the poem serves as the primary example of 'internalized oppression'?", "The child narrator."],
+["How does the Angel's key being 'bright' contrast with the 'coffins'?", "It emphasizes the contrast between divine light and the darkness of industrial exploitation."]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
