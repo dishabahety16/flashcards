@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The River Stairs — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>The River Stairs</h1>
+  <p>Rabindranath Tagore — 60 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["Who is the first-person narrator of the story 'The River Stairs'?", "The stone steps of the river-gh\u0101t"],
+["The narrator invites the reader to listen to the murmur of the water to hear about _____.", "Days gone by"],
+["In which month (Gregorian equivalent) does the story begin when the river is in full flood?", "September (Ashwin)"],
+["What type of plant grew dense beneath the branches of the mango grove near the river bank?", "Kachu plant"],
+["To which type of trees were the fishing boats moored at dawn?", "B\u0101bla trees"],
+["How many of the narrator's steps were visible above the water surface during the flood in September?", "Four"],
+["What ritual activity did the Brahmin priest come to the bathing-stairs to perform?", "Bathing with ritual vessels"],
+["Who are the two friends mentioned who mourned when Kusum was led away to her husband's house?", "Bhuban and Swarno"],
+["How does the narrator describe the location of Kusum's husband's house relative to her childhood home?", "Far away with strange people, houses, and roads"],
+["What specific change did the narrator notice about Kusum's feet when she returned after a year?", "They were without anklets and had lost their music."],
+["How old was Kusum when she became a widow?", "Eight years old"],
+["What physical mark did Kusum rub out from her forehead as a sign of her widowhood?", "The wife's red mark"],
+["Besides the red mark, what other items of jewelry did Kusum strip off upon becoming a widow?", "Her bangles"],
+["Which childhood friend was still in the village and set to be married in December when Kusum returned?", "Sarat"],
+["The narrator compares Kusum's growth into beauty and youth to the rapid filling of the _____ during the rains.", "Ganges"],
+["What three elements of Kusum's appearance acted as a 'veil' over her youth, hiding it from eyes?", "Her dull-coloured robe, pensive face, and quiet manners"],
+["Where did the tall, fair-skinned Sanyasi take shelter upon his arrival in the village?", "The Shiva temple"],
+["Which two holy books did the Sanyasi expound or recite to the women at the temple?", "The Bh\u00e1gbat and the Gita"],
+["What three things did the villagers seek from the Sanyasi besides religious counsel?", "Spells, medicines, and counsel"],
+["In which month did vast crowds arrive at the Ganges for the solar eclipse?", "April"],
+["Where was the fair held during the time of the solar eclipse?", "Under the b\u0101bla tree"],
+["Who identified the Sanyasi as potentially being Kusum\u2019s husband during the April fair?", "A party of women pilgrims from Kusum\u2019s marriage village"],
+["According to the pilgrims, the Sanyasi was the younger son of which specific family?", "The Chattergu family"],
+["What physical differences did some women note to object to the idea that the Sanyasi was Kusum\u2019s husband?", "He had a bigger beard, was thinner, and was taller."],
+["During the moonlit evening meeting, what sound ceased in the temple before the Sanyasi came out?", "The din of brass gongs and bells"],
+["What animal rose in a loud clamour near the houses and then sank into silence as the Sanyasi appeared?", "Jackals"],
+["What creature flew away hooting over Kusum and the Sanyasi's heads, causing her to put her veil back on?", "An owl"],
+["After her first meeting with the Sanyasi, what was Kusum's daily ritual at his feet?", "Bowing to him"],
+["What two chores did Kusum perform daily to serve the god's worship in the temple?", "Gathering flowers for puja and drawing water to wash the floor"],
+["During the transition from winter to spring, what songs did the boatmen begin to sing?", "Songs of Krishna"],
+["Why did Kusum stop visiting the temple and the Sanyasi as the winter ended?", "She felt she was a sinner and had failed in the worship."],
+["In her dream, Kusum saw the lord of her heart whispering of love while clasping her _____.", "Right hand"],
+["How did Kusum\u2019s perception of the Sanyasi change after her recurring dream?", "She no longer saw him only as a god but in a different (romantic) light."],
+["What was the Sanyasi's physical reaction to the floor as Kusum told him her dream?", "He was firmly pressing the stone surface with his right foot."],
+["Who did Kusum eventually confess was the 'lord of her heart' from her dream?", "The Sanyasi"],
+["What reason did the Sanyasi give for leaving the village immediately after Kusum's confession?", "So that she would not see him again and could forget him."],
+["The Sanyasi claimed he did not belong to the world because he was a _____.", "Sanyasi (holy man/ascetic)"],
+["What final act of reverence did Kusum perform before the Sanyasi left?", "Placed the dust of his feet on her head"],
+["What specific sound did the river stairs hear after the Sanyasi left in the darkness?", "A splash in the water"],
+["The narrator observes that Kusum grew in beauty like the Ganges, but was hidden by a veil 'as in a _____'.", "Mist"],
+["Concept: The Sanyasi", "Definition: A Hindu religious mendicant or ascetic who has renounced the world."],
+["Which bird is mentioned as swinging from the chhatim boughs at night?", "Bats"],
+["The Sanyasi's shadow shifted from behind him to fall in front of him as the moon passed from _____ to _____.", "East to west"],
+["What did the Sanyasi tell Kusum she must find after telling him what was in her heart?", "The way to peace"],
+["How many years passed without people noticing that Kusum had grown up before the Sanyasi arrived?", "Ten years"],
+["What was the atmosphere of the village after the Sanyasi's arrival was 'noised abroad'?", "Women crowded the temple to bow to the holy man."],
+["What was the direction of the warm spring breeze that would blow unexpectedly from the south?", "South"],
+["When the Sanyasi first asked 'Who are you?', how did Kusum respond?", "\u2018I am called Kusum.\u2019"],
+["The wind at the end of the story is described as wanting to blow out all the _____.", "Stars of the sky"],
+["Where was the party of women from who recognized the Sanyasi during the eclipse?", "The village where Kusum had been married"],
+["What happened to Kusum's old playmates Bhuban, Swarno, and Amala?", "They were married and had gone away."],
+["How did Kusum first learn of her husband's death?", "Through a letter"],
+["The narrator describes the path of tall grasses on the sandbank as having just begun to _____.", "Flower"],
+["What does the narrator mean by the phrase 'those feet were now without anklets, they had lost their old music'?", "It signifies Kusum's transition to the somber, restricted life of a widow."],
+["What did the Sanyasi do to count his time on the steps before being noticed by the pilgrims?", "Counting his beads"],
+["What did the Sanyasi do when he first saw a woman sitting alone on the gh\u0101t at night?", "He was about to go back (to the temple)."],
+["True or False: Kusum understood every word of the Sanyasi's religious teachings.", "False (She could not have understood it all, but listened attentively)."],
+["The phrase 'placed the dust of his feet on her head' is a traditional Indian gesture of _____.", "Extreme respect or devotion"],
+["What was the 'stony bosom' that Kusum fell upon while sobbing?", "The narrator (the river stairs)"],
+["What does the setting of the 'river stairs' provide to the story's narrative perspective?", "A permanent, stationary witness to the changing lives and seasons of the village."]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
