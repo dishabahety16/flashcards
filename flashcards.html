@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spoken English &amp; Broken English — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a2332;
+    --paper: #f6f3ee;
+    --accent: #2d5a7b;
+    --accent-light: #e8f0f6;
+    --muted: #7a8694;
+    --border: #d6cfc4;
+    --card-bg: #ffffff;
+    --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa;
+    --radius: 12px;
+    --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    max-width: 600px;
+  }
+  header h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.35rem;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    width: 100%;
+    max-width: 560px;
+    margin-bottom: 1.25rem;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.35s ease;
+  }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+    text-align: right;
+  }
+
+  /* Card scene */
+  .card-scene {
+    width: 100%;
+    max-width: 560px;
+    height: 320px;
+    perspective: 900px;
+    margin-bottom: 1.25rem;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 2.25rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    overflow-y: auto;
+  }
+  .card-front {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+  }
+  .card-back {
+    background: var(--flip-bg);
+    color: var(--flip-text);
+    transform: rotateY(180deg);
+  }
+
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+
+  .card-text {
+    font-size: 1.1rem;
+    line-height: 1.55;
+  }
+
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: auto;
+    padding-top: 0.75rem;
+    opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--ink);
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+
+  .btn-shuffle {
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+
+  /* Keyboard hints */
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem;
+    color: var(--muted);
+    opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.65rem;
+  }
+
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Spoken English &amp; Broken English</h1>
+  <p>Bernard Shaw — 75 Flashcards</p>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">← Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next →</button>
+</div>
+
+<div class="kbd-hints">
+  <kbd>←</kbd> <kbd>→</kbd> navigate · <kbd>Space</kbd> flip
+</div>
+
+<script>
+const DATA = [
+["According to Bernard Shaw, what determines if a gramophone listener is hearing his actual voice?","The speed at which the record is turning."],
+["How did Mr Ramsay MacDonald's voice sound when his record was played too fast?","High pitched, sharp, and cackling."],
+["What were the actual characteristics of Mr Ramsay MacDonald's voice?","Fine, deep, musical, and dignified."],
+["What adjustment did Shaw make to the gramophone to restore the Scottish orator's 'melodious rhetoric'?","He used the screw to slow the record down gradually."],
+["What hint does Shaw give to listeners to find the correct speed for his own voice recording?","Slow it down until he sounds like an amiable old gentleman with a pleasant Irish voice."],
+["Shaw describes his own voice as having which specific national accent?","Irish."],
+["What age was Bernard Shaw at the time of the 'Spoken English and Broken English' recording?","71 years old."],
+["Which two groups of people does Shaw identify as the primary audience for his speech?","Foreign students of English and native speakers with provincial or Cockney dialects."],
+["What is Shaw's stance on the existence of 'ideally correct English'?","He asserts that there is no such thing as ideally correct English."],
+["What did the committee established by the BBC aim to provide for British islanders?","A model of correct English speech."],
+["Who served as the chairman of the BBC committee on English speech?","The poet laureate."],
+["Why was Bernard Shaw specifically selected for the BBC committee on speech?","His experience as a playwright superintending rehearsals and as a public speaker."],
+["Which two simplest and commonest words do BBC committee members fail to pronounce identically?","Yes and no."],
+["According to Shaw, what is the mark of a 'cultivated person' in speech?","Speaking in a way that is intelligible in every English-speaking country."],
+["Why does Shaw claim it is 'nonsense' to say that all educated committee members speak 'correctly'?","Because they all speak differently based on their country of origin."],
+["Instead of 'correctly', what term does Shaw use to describe how cultivated people speak?","Presentably."],
+["How does Shaw's speech change when he addresses an audience of thousands versus his wife?","He speaks much more carefully and distinctly to the public audience."],
+["What does Shaw's wife often say to him when he speaks carelessly at home?","Don't mumble and don't turn your head away."],
+["What are 'company manners' in the context of speech?","The careful and clear way people speak when a stranger or outsider is present."],
+["What are 'home manners' in the context of speech?","The careless, often mumbled way family members speak to one another in private."],
+["Shaw uses the 'keyhole' analogy to illustrate the difference between which two concepts?","Home manners and company manners."],
+["In Shaw's example, how does he ask a stranger for the time?","What o'clock is it?"],
+["In Shaw's example, how does he casually ask his wife for the time?","Clock's it."],
+["According to Shaw, how many people in London out of every thousand speak 'bad English'?","999"],
+["Why does a foreigner's 'perfect' English often make them harder for natives to understand?","Foreigners cannot perfectly mimic native syllable stress and vocal inflection (rise and fall)."],
+["What does Shaw recommend a foreign traveller do to ensure they are helped by natives?","Speak with a strong foreign accent and use 'broken English'."],
+["How does Shaw define 'broken English'?","English spoken without any grammar."],
+["What is the benefit of using 'broken English' when asking a native for directions?","The native will recognise the speaker is a foreigner and make extra effort to be helpful."],
+["According to Shaw, a foreigner speaking 'perfect' English might be suspected of being a _____.","Beggar or confidence trickster."],
+["What 'broken' phrase does Shaw suggest using instead of asking for the 'railway terminus at Charing Cross'?","\"Please, Charing Cross, which way?\""],
+["How does Shaw characterise the act of an Englishman speaking 'too well'?","As a pedantic affectation."],
+["Why does Shaw consider it an 'insult' for a foreigner to speak a language too well?","It highlights that the native cannot understand their own language when spoken perfectly."],
+["The speech 'Spoken English and Broken English' was recorded in which year?","1927"],
+["What was the label under which the transcript of Shaw's speech was officially released?","Linguaphone Language Records."],
+["Which famous actor was noted by Shaw for the 'beauty of his speech' on the BBC committee?","Sir Johnston Forbes Robertson."],
+["According to the summary, Shaw emphasizes language as an efficient tool for _____.","Communication."],
+["What does Shaw claim his wife suspects him of as he gets older?","Growing deafer and deafer."],
+["What term does Shaw use for the 'sham' versions of himself heard at the wrong gramophone speed?","Phantoms or impostors."],
+["Shaw argues that foreign students should not try to speak perfectly because 'no one will _____ you'.","Understand."],
+["How does Shaw describe the members of the BBC committee in terms of their social standing?","Educated persons whose speech would pass as correct and refined in any society."],
+["What is the 'golden rule' mentioned in the analysis of Shaw's work?","There are no golden rules."],
+["According to the PPTX, what is more important than 'correct' English in today's globalised world?","Good (or presentable) English."],
+["What is the core assumption Shaw makes about the foreigners he is addressing?","That they desire to be understood while travelling in the British Commonwealth or America."],
+["What is the primary difference between a public speaker and a person at home, according to Shaw?","The level of care and 'pains' taken with speech clarity."],
+["Shaw mentions five famous dead singers/speakers whose records also require speed adjustment; name one.","Adelina Patti (or Sarah Bernard, Charles Santley, Caruso, Tamagno)."],
+["What specific dialect does Shaw mention might prevent a native from obtaining certain employment?","Cockney or provincial dialects."],
+["According to the Geek Roll summary, what is the main requirement to speak 'broken English'?","Loud voice, minimum effort, and basic knowledge of the language."],
+["Shaw suggests that if you feel a voice on a record is 'a horrid man', it is a sign of what?","The gramophone speed is wrong."],
+["Why does Shaw say he must speak syllable by syllable on the gramophone record?","Because many listeners are trying to follow his words exactly for learning purposes."],
+["What does Shaw believe will be the reaction of natives if a foreigner uses simple, ungrammatical requests?","They will be pleased by their own cleverness in understanding and will help."],
+["What does 'don't' stand for, as explained in Shaw's text?","Do not."],
+["According to Shaw, even if native speakers don't speak perfectly, they can understand each other if the speaker is _____.","English."],
+["The BBC committee on pronunciation included members from which university?","Oxford University."],
+["What does Shaw call the 'unmusical, quarrelsome self-assertion' of MacDonald's sped-up voice?","A high-pitched yapping."],
+["What is the ultimate goal of speaking English according to the 'Unit I' teaching notes?","Mutual understanding."],
+["How does Shaw justify the inclusion of Irish, Scottish, and Welsh members on the BBC committee?","To represent the different national varieties of presentable English."],
+["What does Shaw mean by 'Company Manners' being 'different' even if not 'better'?","They are more formal and distinct than speech used with intimates."],
+["In 'Spoken English and Broken English', language is treated primarily as a _____ rather than a subject for perfectionism.","Tool."],
+["What is Shaw's advice regarding learning foreign languages in general?","Never try to speak them too well."],
+["Why might a native speaker overwhelm a 'broken English' speaker with directions?","Because the simple request is instantly intelligible and clearly from a foreigner in need."],
+["Cloze Deletion: Shaw concludes that what you are hearing is 'not my voice unless your gramophone is turning at exactly the _____'.","Right speed"],
+["What does Shaw claim is the 'worst of it' regarding finding the right speed for his record?","He cannot tell the listener exactly how to find it if they have never heard him before."],
+["What was Ramsay MacDonald's political role mentioned in the text?","Parliamentary chief of the British Labour Party."],
+["According to Shaw, 'presentable English' stamps the speaker as a _____ person.","Cultivated."],
+["Term: Cockney English.","Definition: The accent or dialect traditionally spoken by working-class Londoners."],
+["Concept: The illusion of communication.","Shaw's takeaway: The single biggest problem in communication is the illusion that it has taken place."],
+["How does the PPTX analysis describe the United Kingdom's political state in 1927?","Politically unstable yet emerging."],
+["Shaw claims that his speech to his wife at breakfast is 'good enough for her' but not for _____.","The gramophone listeners."],
+["According to Shaw, what makes a native speaker suspect a foreigner of being a 'confidence trickster'?","Beautifully pronouncing every vowel and consonant in an elaborate grammatical phrase."],
+["What does Shaw hope students take away regarding travel?","Do not be afraid to travel, as you need very little language knowledge to be understood."],
+["Which member of the BBC committee was an 'artist whose materials are the sounds of spoken English'?","The poet laureate."],
+["How does Shaw describe the difference between his public and home speech regarding his wife's reaction?","If he spoke publicly at home, she would think he was mad; if he spoke casually on the record, it would be useless."],
+["Shaw asserts that no two members of the BBC committee pronounce 'yes' and 'no' exactly _____.","Alike."],
+["According to the Geek Roll summary, Shaw's speech was broadcast over which radio station?","WNEW in Manhattan."],
+["What was the specific series of talks that Shaw's recording belonged to?","A Treasury of the Spoken World."]
+];
+
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0;
+  render();
+}
+
+document.getElementById('cardScene').addEventListener('click', flip);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+
+render();
+</script>
+</body>
+</html>
