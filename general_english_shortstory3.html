@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Neem Tree — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>The Neem Tree</h1>
+  <p>Gopinath Mohanty — 40 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["In the beginning of 'The Neem Tree', what materials did the children use to build the Sri Rama temple?", "Bricks and mud."],
+["Which friend scolded the narrator for eating the neem fruit offered to God?", "Purna."],
+["According to the narrator's grandma, why is it acceptable for children to eat food meant for God?", "God is merciful and does not mind children eating His food."],
+["Describe the roof construction of the narrator's home in his paternal village.", "It was thatched with toddy palm leaves."],
+["Why had the narrator's father been staying in a neighboring state for several months?", "He was setting up his business."],
+["Who stayed behind with the narrator when his parents first left the village?", "His aunt and uncle."],
+["What did the narrator do to get a better view of his parents leaving the village?", "He climbed onto a hot boulder."],
+["What treats did the aunt and uncle provide to comfort the narrator the evening his parents left?", "Ripe mangoes and pakodi."],
+["What activity were the 'bad people' doing inside the grown-up temple according to the grandma?", "Betting (poker) and drinking."],
+["Identify the character: He is a blind man who tells the narrator that God has abandoned the villagers.", "Venkaiah."],
+["Why did Venkaiah believe the God of the temple could not help the narrator?", "The villagers had abandoned the God, so the God abandoned them."],
+["How did the narrator compare God's lack of care to the 'mango lady' from the orchard?", "She would not give mangoes without receiving money, rice, or lemons in return."],
+["Contrast the narrator's feelings toward neem trees versus mango trees during his school days.", "He found neem trees silky and soothing, but mango trees made him uncomfortable and dark."],
+["Who arrived after a year to take the narrator to stay in the village of Palli?", "His maternal grandpa."],
+["What was the primary difference in house construction between Palli and the narrator's paternal village?", "Houses in Palli had clay roof tiles instead of palm leaf thatch."],
+["What specific industrial site in Palli captured the narrator's excitement?", "Mica mines."],
+["In Palli, why did the narrator's aunts show him an abundance of love?", "They wanted to shower him with the love they had received from his mother, their eldest sister."],
+["Who was Mahantha?", "A skinny shepherd boy from a lower caste who became the narrator's friend."],
+["What toys did Mahantha have that fascinated the narrator?", "A raft made of dried pumpkins and bamboo, and a tricycle for carrying calves."],
+["Why did the narrator's grandparents believe they had 'spoiled' him?", "Because of his risky forest adventures, school-skipping, and stubbornness."],
+["Where was the most extreme place the narrator hid to avoid his family in Palli?", "Inside a storage trunk box."],
+["In the scene with the bus, what color saree was the lady wearing whom the narrator mistook for his mother?", "Maroon."],
+["How did the narrator react when he realized the lady from the bus was not his mother?", "He let go of her legs and collapsed miserably."],
+["When the narrator's father arrived at the maternal home, what trademark clothing was he wearing?", "A white dress."],
+["Where did the narrator's father take him after leaving the maternal home in Palli?", "To a boarding school."],
+["How did other students describe the boarding school to the narrator?", "A place run by communists meant for stubborn children."],
+["What was the 'Potbelly' teacher's subject at the boarding school?", "English."],
+["What was the narrator's nonsensical answer to the English teacher's question about Mary?", "Neem tree."],
+["How did the English teacher punish the narrator for his incorrect answer?", "He hit the narrator's fingers with a wooden duster."],
+["What did the narrator do while suffering from a fever and hallucinations in the boarding school?", "He wrote apologetic letters to his paternal and maternal homes."],
+["According to the story, who gave a speech at the school auditorium about superstitious beliefs?", "Comrade Lavanam."],
+["What profession did the narrator eventually enter as an adult?", "Software programming."],
+["In the narrator's adult dream, what did his father say to him?", "He apologized for bringing the narrator immense pain."],
+["How long before the adult dream had the narrator's father actually passed away?", "One week."],
+["How did the narrator's son provide him comfort at the end of the story?", "By grabbing him back during a hug, which consoled his deep loneliness."],
+["The narrator's childhood temple deity was made of a simple _____, while the adult temple deity was _____.", "Brick; dusty black stone (rock)."],
+["What was the age of the narrator's son at the end of the narrative?", "6 years old."],
+["Concept: The Neem Tree", "In the story, it symbolizes childhood comfort, soothing memories, and a sense of rootedness that contrasts with harsh school environments."],
+["The phrase 'released myself like a shell from the cannon' describes the narrator's action of _____.", "Running toward the bus when he thought his mother had arrived."],
+["Why did the narrator find the boarding school classrooms particularly oppressive?", "He could see nothing through the windows except more classrooms, gates, and barbed wire fences."]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
