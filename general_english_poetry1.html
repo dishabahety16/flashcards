@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>General English Poetry 1 — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Ecology</h1>
+  <p>A.K. Ramanujan — 55 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["Who is the author of the poem \"Ecology\"?", "A.K. Ramanujan"],
+["What specific type of tree triggers the conflict in the poem \"Ecology\"?", "Red Champak trees"],
+["What color is the \"fog of a fragrance\" that spreads through the street in \"Ecology\"?", "Yellow"],
+["According to the mother in \"Ecology\", how was the Champak tree originally seeded?", "By a passing bird\u2019s providential droppings"],
+["What specific physical ailment does the mother suffer from due to the blooming trees?", "Blinding migraines"],
+["Explain why the poet returns home \"in a rage\" after the first rain of the season.", "He knows the rain will make the Champak trees bloom and cause his mother pain."],
+["Why does the mother refuse to let her children cut down the flowering tree?", "She has a deep emotional and religious attachment to it as a source of offerings."],
+["What does the \"yellow pollen fog\" signify regarding the relationship between the house and nature?", "It represents an invasive natural force that cannot be excluded by human structures."],
+["In the context of the mother's beliefs, why is the tree's origin considered \"providential\"?", "She views its chance planting by a bird as a divine gift or a sign of good fortune."],
+["Summarize the central idea expressed in the final line of \"Ecology\".", "Human beings and nature are interconnected through both beauty and shared suffering."],
+["How does the poet personify the family's house to show its interaction with the environment?", "He describes the walls as having ears, eyes, and being porous like humans."],
+["What physical relief does the mother use while suffering from her seasonal migraine?", "A cold pack on her head."],
+["Identify the sensory details used to describe the house's internal atmosphere in stanza 4.", "Scales, smells, bone-creaks, and nightly visiting voices."],
+["How are the flowers of the Champak tree utilized by the women in the family?", "They are gathered in basketfuls for religious offerings to the gods."],
+["To what physical object is the mother's temper compared in stanza 5?", "Twisted silver."],
+["Compare the poet's perspective on the tree with his mother's perspective.", "The poet views the tree as a source of irritation, while the mother sees it as a sacred legacy."],
+["Analyze the irony in the mother receiving a \"dower of migraines\" from the tree.", "A dower is usually a gift, but here it refers to an inherited legacy of physical pain."],
+["What does the phrase \"no door could shut out\" imply about the power of the natural environment?", "It suggests that nature's influence is pervasive and cannot be contained by human barriers."],
+["Examine the significance of the tree being \"almost as old\" as the mother.", "It highlights a lifelong, parallel bond between the woman's life and the tree's growth."],
+["Analyze how the house is characterized as a living entity in the poem.", "The poet attributes human-like biological traits such as pores, ears, and eyes to the structure."],
+["Critique the mother's decision to preserve the tree despite her severe physical suffering.", "Her choice demonstrates that cultural and spiritual values can take precedence over personal comfort."],
+["Evaluate the poem's message regarding environmental responsibility.", "It advocates for a deep respect for natural history even when nature causes human discomfort."],
+["Justify the poet's \"rage\" described in the opening stanza.", "It is an expression of protective empathy for his mother's recurring and avoidable agony."],
+["Evaluate the appropriateness of the title \"Ecology\" for this poem.", "It reflects the complex and inseparable relationship between humans, their heritage, and the natural world."],
+["Judge the mother's attachment to the tree based on her refusal to cut it down.", "She values the tree's historical and religious continuity more than her own physical well-being."],
+["What historical period's social issues are critiqued in \"The Chimney Sweeper\"?", "The Industrial Revolution."],
+["Why was the speaker in \"The Chimney Sweeper\" sold into child labor at a very young age?", "His mother died and his father sold him to work."],
+["What phonetic cry does the young chimney sweeper use because he cannot pronounce \"sweep\"?", "\"'weep! 'weep!\""],
+["To what animal is Tom Dacre\u2019s curly hair compared before it is shaved off?", "A lamb."],
+["What comfort does the narrator offer Tom Dacre regarding his shaved head?", "He tells Tom that without hair, the soot cannot spoil his white hair."],
+["In Tom\u2019s dream, what do the \"coffins of black\" symbolize?", "The dark, narrow chimneys that trap the children in a life of misery and death."],
+["Which four boys are specifically named as being locked in coffins in the dream sequence?", "Dick, Joe, Ned, and Jack."],
+["How are the children released from their coffins in Tom Dacre's dream?", "An Angel arrives with a bright key and opens them."],
+["What imagery does Blake use to represent freedom and purity in Tom's dream?", "The children leap on a green plain, wash in a river, and shine in the sun."],
+["What does the Angel promise Tom if he is a \"good boy\"?", "He will have God for a father and never lack joy."],
+["What action in the final stanza shows the boys returning to their harsh reality?", "They rise in the dark and take their bags and brushes to work."],
+["How does Tom Dacre feel on the cold morning after his dream?", "He feels happy and warm."],
+["Analyze the irony in the poem's final line regarding \"duty\" and \"harm\".", "The children believe working hard will keep them safe, even though the work itself is what harms them."],
+["What does the speaker mean when he says he sleeps \"in soot\"?", "It refers to the miserable and filthy living conditions of the chimney sweepers."],
+["What is the primary theme of William Blake's \"The Chimney Sweeper\"?", "Social injustice and the exploitation of vulnerable children."],
+["What is the overarching theme of Maya Angelou's poem \"Still I Rise\"?", "Resilience and empowerment in the face of discrimination."],
+["To what substance does Angelou compare herself in the first stanza to show she will rise?", "Dust."],
+["What metaphor does the speaker use to describe her self-assurance in stanza 2?", "Having oil wells pumping in her living room."],
+["Why does Angelou use the imagery of moons, suns, and tides in stanza 3?", "To illustrate that her resilience is as certain and natural as the laws of the universe."],
+["List the physical postures of defeat that the oppressor expects from the speaker in stanza 4.", "Bowed head, lowered eyes, and shoulders falling like teardrops."],
+["In stanza 5, what metaphor is used to show the speaker rising despite being \"cut\" or \"shot\"?", "Rising like air."],
+["How does Angelou characterize the historical narratives written about her by oppressors?", "As bitter and twisted lies."],
+["What does the transition from \"nights of terror\" to \"daybreak\" symbolize in the final stanza?", "The move from historical oppression and fear toward hope and freedom."],
+["Who does the speaker claim to be the \"dream and the hope\" of?", "The slave."],
+["What does the speaker say she brings from her ancestors?", "Gifts."],
+["What is the purpose of the repeated refrain \"I rise\" at the end of Angelou's poem?", "It emphasizes the unstoppable and triumphant nature of her spirit."],
+["What does \"sassiness\" represent in the context of the speaker's defiance?", "Her fearless and prideful attitude that refuses to submit to oppression."],
+["What quality does the speaker compare to \"hopes springing high\"?", "Her inevitable rise."],
+["How does the speaker respond to the \"hatefulness\" of the oppressor?", "She rises like air, remaining light and invincible."],
+["According to the final stanza, what is the speaker's relationship to her history?", "She is the fulfillment of her ancestors' struggles and hopes."]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
