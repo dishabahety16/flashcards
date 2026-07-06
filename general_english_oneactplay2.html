@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Giant's Wife — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>The Giant&#39;s Wife</h1>
+  <p>William Carleton — 68 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["Who is the Irish author known for stories rooted in rural life and folklore who wrote 'The Giant's Wife'?", "William Carleton"],
+["In which 1888 anthology did William Carleton's version of the story, 'A Legend of Knockmany', first appear?", "W.B. Yeats's 'Folk and Fairy Tales of the Irish Peasantry'"],
+["What is the primary purpose of William Carleton's writing style regarding Irish traditions?", "To preserve Irish customs, folk beliefs, and oral storytelling traditions."],
+["Term: Reader's Theatre", "Definition: A classroom format where scripts are read aloud using voice and expression without full staging, costumes, or memorisation."],
+["The Irish Literary Revival aimed to reclaim Irish identity through _____ rather than British colonial narratives.", "folklore and literature"],
+["According to Irish legend, which landmark was built by Fin MacCool as a road to Scotland?", "The Giant's Causeway"],
+["How is the name 'Cuhullin' pronounced in the context of this play?", "'koo-HULL-in'"],
+["What action must Fin MacCool take to activate his magic ability to sense danger?", "Suck his magic thumb."],
+["Where does Cuhullin's supernatural strength reside?", "In the forefinger of his right hand."],
+["What is the inciting incident that causes Fin MacCool to feel terrified at the start of the story?", "Cuhullin is seeking him out to fight and prove who is the strongest giant."],
+["Who is Oona in 'The Giant's Wife'?", "Fin MacCool's wife and the story's central strategist."],
+["What object does Fin use to make a walking stick, demonstrating his immense size?", "A full-grown fir tree pulled up by its roots."],
+["What specific item does Oona hide inside her special batch of bread loaves?", "Iron griddles"],
+["To deceive Cuhullin, Oona disguises Fin as a _____ in a cradle.", "baby"],
+["What is the first 'impossible' household task Oona asks Cuhullin to perform to test him?", "Turning the whole house around to face away from the wind."],
+["Why does Oona ask Cuhullin to split the mountain?", "To find water for a new well."],
+["What physical injury does Cuhullin suffer after biting into Oona's bread?", "He loses two of his front teeth."],
+["How does Oona use the 'safe' loaf of bread (the one without a griddle) in her plan?", "She feeds it to 'baby' Fin to prove that even Fin's infant son can eat bread that broke Cuhullin's teeth."],
+["How is Cuhullin finally stripped of his giant strength?", "Fin MacCool bites off Cuhullin's magic forefinger."],
+["Term: Tall Tale", "Definition: A humorous story featuring impossible, greatly exaggerated events told in a serious manner for entertainment."],
+["Give an example of 'exaggeration' from the meal Oona prepares for Fin.", "Three whole roast oxen and thirty boiled cabbages."],
+["In the context of the play's themes, what does Oona represent in contrast to the giants' brute power?", "Wit and intelligence."],
+["How does the story 'The Giant's Wife' subvert traditional gender roles in folklore?", "The male hero (Fin) is portrayed as helpless and hiding, while the female character (Oona) is the active protector and hero."],
+["What is the significance of the domestic space (the house/kitchen) in Oona's victory?", "It is Oona's arena of authority where she controls all information and materials used to defeat Cuhullin."],
+["Why is Fin MacCool's legendary reputation ironic within this specific story?", "Despite his status as a great hero, he is functionally useless in the crisis and must rely entirely on his wife."],
+["What is the primary theme demonstrated by Cuhullin performing domestic chores for Oona?", "The superiority of wit over brute power."],
+["Oona's final line, 'Don't be too hard on the poor thing!', illustrates which heroic quality?", "Mercy or magnanimity."],
+["According to the Teacher Notes, what does the Giant symbolize in this tale?", "Immense physical strength and the mysterious forces of nature."],
+["Why did Oona invent the tasks of turning the house and splitting the mountain?", "To frighten Cuhullin by making him believe these were routine tasks for Fin."],
+["How does the Reader's Theatre format help students understand dramatic structure?", "It distinguishes between narration and dialogue through the use of multiple narrators and character roles."],
+["The character of Cuhullin is drawn from which legendary cycle of Irish tradition?", "The Ulster Cycle"],
+["What is the narrative effect of having four narrators in the Reader's Theatre script?", "It keeps the action moving and distributes the storytelling role communally."],
+["What does the 'magic thumb' represent regarding Fin's character in this story?", "His paralysis; he can sense danger but lacks the wit to solve it."],
+["How does Oona maintain the illusion when Cuhullin actually succeeds at the 'impossible' tasks?", "She shows no surprise and treats his massive feats as ordinary favours."],
+["What is the psychological impact on Cuhullin when he sees the 'baby' eat the bread?", "He becomes terrified of the father's strength if the infant is already that powerful."],
+["Why is Cuhullin's curiosity about the baby's teeth his 'undoing'?", "It leads him to voluntarily place his magic finger into Fin's mouth."],
+["Define 'Folk Heroism' as it applies to Oona.", "Heroism redefined as the capacity to resolve a crisis through cleverness and resourcefulness rather than violence."],
+["What is the 'Irish Literary Revival'?", "A 19th-century cultural movement to reclaim Irish identity through the preservation of folklore and rural traditions."],
+["How does the story's setting in rural Ireland contribute to its atmosphere?", "It provides a landscape where legends and the supernatural are treated as parts of everyday life."],
+["In the Reader's Theatre script, how is the 'biting off of the finger' staged for the audience?", "The action is faked by having the actors face sideways and Cuhullin bending his finger down."],
+["What does Cuhullin's loss of his magic finger symbolize?", "The vulnerability of brute force when it has a single, exploitable weakness."],
+["Which character represents 'emotional composure' throughout the conflict?", "Oona"],
+["The word 'Ach' in the script rhymes with the Scottish word _____.", "Loch"],
+["What does the 'white bonnet' and 'nightgown' on Fin represent symbolically?", "The complete stripping away of his traditional masculine heroic identity."],
+["How does the story demonstrate that intelligence is 'internal' and cannot be taken away?", "Oona remains powerful because her wit is her own, whereas Cuhullin's power is physical/external and can be removed."],
+["Why is the tall tale genre effective for exploring cultural pride?", "The use of impossible exaggeration celebrates a world where a culture's heroes have limitless potential."],
+["What is the significance of the bread being a 'domestic' object in Oona's strategy?", "It turns an everyday womanly skill (baking) into a weapon that defeats a legendary warrior."],
+["What happens to Cuhullin's strength once his finger is bitten off?", "He becomes no stronger than an ordinary man and flees in terror."],
+["In Reader's Theatre, why is 'vocal expression' prioritized over physical movement?", "Because the format is designed for reading aloud in a classroom to emphasize dialogue and story structure."],
+["What does Carleton's work suggest about the value of ordinary Irish people?", "That their imagination, humour, and voice are a rich cultural heritage worth preserving."],
+["Which character performs the role of the 'Monster' in the conventional folk tale structure of this play?", "Cuhullin"],
+["How does Oona manipulate Cuhullin's 'pride' to make him eat the hard bread?", "By telling him it is the exact bread her husband eats every day."],
+["What is the result of Cuhullin trying to punch Fin after losing his finger?", "He merely hurts his own hand because his supernatural strength is gone."],
+["The title 'A Tall Tale of Ireland' immediately signals to the reader that the story will contain _____.", "exaggeration"],
+["What is the primary function of the 'Narrators' in the script's opening?", "To provide historical and mythological context about Fin MacCool and the Giant's Causeway."],
+["How far does Fin chase Cuhullin at the end of the play?", "Halfway across Ireland."],
+["What is the 'finger trap' stage of Oona's plan designed to exploit?", "Cuhullin's curiosity and his reliance on a single magical source of power."],
+["Term: Oral Tradition", "Definition: The practice of passing stories, beliefs, and customs from one generation to another by word of mouth."],
+["Why is the use of 'dialect' (e.g., 'me name', '\u2019twill') important in the script?", "It preserves the authentic voice and rhythm of Irish rural storytelling."],
+["According to the Bloom's Taxonomy reference, which level involves 'summarising concepts in your own words'?", "L2 (Understand)"],
+["Which Bloom's level requires 'breaking down ideas and finding patterns', such as analyzing Oona's strategy?", "L4 (Analyse)"],
+["What does Oona's hospitality (offering stew and rest) serve in her tactical plan?", "It keeps Cuhullin in the house long enough for her deception to take full effect."],
+["How does the play's humour act as a 'buffer' for the audience?", "It creates comic distance so that the danger from the giants is never truly frightening."],
+["Fin's line, 'A finer cook never filled this great belly!', establishes his character as having _____ appetites.", "giant (or exaggerated)"],
+["What is the relationship between 'A Legend of Knockmany' and 'The Giant's Wife'?", "The play is an adaptation by Aaron Shepard of Carleton's original story."],
+["Describe the 'Three-Stage' progression of Oona's plan.", "1. Household tasks (to intimidate); 2. Iron bread (to damage teeth/confidence); 3. Finger trap (to strip power)."],
+["Why does Oona wink at Fin while he is in the cradle?", "To signal which bread loaf is safe to eat and to guide him through the next step of the plan."],
+["What is the core learning objective of studying 'The Giant's Wife' in General English?", "To understand the intersection of folklore, dramatic format, and thematic character analysis."]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
