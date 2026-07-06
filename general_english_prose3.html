@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deepa Malik — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Deepa Malik</h1>
+  <p>35 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["What specific medical condition led to Deepa Malik's paralysis?", "She developed a spinal tumor that required a major surgery, resulting in paralysis from the waist down."],
+["What was the primary reason Deepa Malik entered the world of sports?", "She sought to create a new identity and prove that life in a wheelchair was not a tragedy."],
+["What historic achievement did Deepa Malik record at the 2016 Rio Paralympic Games?", "She became the first Indian woman to win a medal at the Paralympics."],
+["Which medal did Deepa Malik win in the shot put event at the 2016 Summer Paralympics?", "She won the silver medal."],
+["At what age did Deepa Malik compete in the Rio Paralympics?", "She was 42 years old."],
+["Deepa Malik coined the term \"_____\" to describe her life's mission in sports.", "Ability beyond Disability"],
+["Why does Deepa Malik describe herself as a \"sports activist\" rather than just a sportsperson?", "She uses sports as a medium for social change and to advocate for better policies for para-athletes."],
+["Which two specific areas does Deepa Malik identify as needing improvement for India to be truly progressive?", "Cleanliness and the sensitization of inclusivity for persons with disabilities."],
+["What consequence does Deepa Malik attribute to infrastructure that is not disabled-friendly?", "It forces people with disabilities into an \"out of sight, out of the mind\" mode in society."],
+["Why was Deepa Malik forced to switch from javelin to shot put for the Rio Paralympics?", "Shot put was the only event in her disability category (F53) listed for the Rio Games."],
+["What was Deepa Malik's international ranking in shot put when she left for the Rio Paralympics?", "She was ranked seventh internationally."],
+["How much did Deepa Malik improve her shot put distance between qualifying and the Rio Games?", "She improved from 3.67 metres to 4.61 metres in eleven months."],
+["Deepa Malik views her wheelchair as a \"symbol of _____\" rather than a limitation.", "change"],
+["According to Deepa Malik, what two disciplines should coaches study to better support para-athletes?", "Biomechanics and disability-specific sensitization."],
+["What was the outcome of Deepa Malik's public incident with an airline regarding wheelchair handling?", "The airline established proper procedures and improved their sensitization measures for disabled passengers."],
+["Which stadium in Delhi did Deepa Malik help conduct a para-athlete accessibility assessment for?", "The Jawaharlal Nehru Stadium."],
+["Deepa Malik holds an Asian record and a medal from which specific multi-sport event prior to Rio?", "The Incheon Asian Games."],
+["What is Deepa Malik's ultimate goal for the specially-abled community in India?", "To see every corner of India become absolutely accessible, inclusive, and barrier-free."],
+["Before focusing on track and field, what other adventurous sports did Deepa Malik participate in?", "She was a rallyist, a biker, and a swimmer."],
+["In which specific disability category does Deepa Malik compete?", "The F53 category."],
+["What social organization did Deepa Malik actively participate in as part of her life as an army wife?", "The Army Wives Welfare Association (AWWA)."],
+["How does Deepa Malik respond to negative comments about her age or potential?", "She views challenges as fuel that makes her gear up and train harder."],
+["According to Deepa Malik, what is missing in the training of current sports coaches in India?", "Sensitization toward the medical and physical limitations of different disabilities."],
+["What does Deepa Malik believe is the key to turning life challenges into opportunities?", "Having a combination of determination, courage, and positive thinking."],
+["Deepa Malik mentions that minor infrastructure changes, such as adding a _____, can significantly help para-athletes.", "lift"],
+["What was Deepa Malik's world ranking in javelin throw before she had to switch events?", "She had reached the World Number 2 spot."],
+["At what age did Deepa Malik first participate in the National championships?", "She was 36 years old."],
+["Deepa Malik advocates for infrastructure to be \"barrier-free\" in terms of both the physical world and the _____.", "human mind (or psyche)"],
+["What specific project did Deepa Malik start to help create her new identity post-paralysis?", "Her own entrepreneurship project."],
+["Where was the first disability excellence centre dedicated to para-sports inaugurated?", "The text mentions a lift added in Gandhinagar, Gujarat, as part of improving sports sectors."],
+["What was Deepa Malik's reaction to the perceived 99.75% reduction in the sports budget for the disabled?", "She remained optimistic, believing the funding would come through the disability affairs ministry or special PMO programs."],
+["Deepa Malik notes that people often mistakenly believe wheelchairs are only for those who _____.", "can't walk anymore (lacking awareness that those who cannot walk at all also need them)."],
+["What role did Deepa Malik take on during army functions when she could no longer dance?", "Master of Ceremonies."],
+["Deepa Malik credits her ability to take challenges head-on to her _____.", "upbringing and sound childhood."],
+["What does Deepa Malik aim to establish to help train future para-athletes and coaches?", "An academy."]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
