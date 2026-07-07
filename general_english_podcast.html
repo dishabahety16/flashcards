@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podcast — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Podcast</h1>
+  <p>General English — 37 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["Correct the following grammatical error: 'When the class starts?'", "When does the class start?"],
+["In English question formation, what is the standard placement of the auxiliary verb in relation to the subject?", "The auxiliary verb (is/are/does) must come before the subject."],
+["Define 'listening for gist.'", "Understanding the overall message or main idea without catching every single word."],
+["Define 'listening for detail.'", "Identifying specific facts, names, numbers, or examples within an audio source."],
+["What makes podcasts an ideal tool for gist listening practice?", "They are conversational, focused on specific topics, and train the ear for natural speed."],
+["Which audio source typically features a host asking a guest structured questions to explore views and specific examples?", "Interviews"],
+["How are TED Talks defined in this unit?", "Short, powerful speeches by experts on diverse topics."],
+["What does the 'G' stand for in the G\u00b7D\u00b7S framework for listening?", "Gist"],
+["What does the 'D' stand for in the G\u00b7D\u00b7S framework for listening?", "Detail"],
+["What does the 'S' stand for in the G\u00b7D\u00b7S framework for listening?", "Strategy"],
+["When should the 'Predict' listening strategy be utilized?", "Before the audio begins."],
+["Why should a listener focus on 'stressed' words during fast speech?", "Key information is usually carried by the words that the speaker emphasizes."],
+["How should 'context clues' be used when a listener misses a specific word?", "By guessing the unknown word based on the meaning of the surrounding words."],
+["What is the recommended method for note-taking during 'listening for detail'?", "Write down keywords rather than full sentences."],
+["Complete the memory rhyme: 'Gist is the forest, detail is the tree \u2014 _____.'", "first see the whole, then zoom in to see"],
+["Identify the three structural parts of a TED Talk.", "Hook (Opening), Main Argument, and Conclusion."],
+["What should a listener expect to hear during the 'Hook' of a TED Talk?", "A surprising fact, story, or question."],
+["Identify three signal words that indicate a speaker is building their 'Main Argument' in a TED Talk.", "Because, therefore, and however."],
+["What two elements are typically found in the 'Conclusion' of a TED Talk?", "A summary and a call to action."],
+["How does the 'Predict' strategy specifically help with comprehension?", "It activates background knowledge and prepares the brain to recognize relevant vocabulary."],
+["Based on the Dr. Kalam transcript example, what is the 'gist' of his message?", "The education system suppresses the natural creativity children are born with."],
+["In the Dr. Kalam transcript example, what is the 'specific detail' provided about children's creativity?", "97% of children are born creative but lose it by age 10."],
+["When framing an opinion question on 'Education,' what are common starting phrases?", "Phrases like 'Why is...', 'What do you think...', or 'How can...'."],
+["Which listening strategy involves playing the audio again to focus on missed information?", "Re-listen"],
+["What is the primary difference between a traditional teacher-led class and the Question Carousel activity?", "In traditional classes, the teacher speaks most; in the carousel, every student speaks and listens throughout."],
+["What is the recommended answer length in the Question Carousel to ensure fluency practice?", "Full sentences (avoiding one-word replies)."],
+["In a TED Talk, where is the listener most likely to encounter data, examples, and stories?", "In the Evidence section of the Main Argument."],
+["What phrases typically signal the beginning of a TED Talk's conclusion?", "Phrases like 'So...', 'In conclusion...', or 'Remember...'"],
+["What is a 'podcast' as described in Subtopic 2?", "An audio programme on a specific topic, such as technology, stories, or education."],
+["Why are interviews considered useful for practicing both gist and detail listening?", "They require following a main view (gist) while identifying specific examples given (detail)."],
+["According to the unit, what is the fundamental difference between hearing and listening?", "Gist helps follow the general conversation, while detail helps answer specific questions."],
+["Why do good listeners need to master both gist and detail skills?", "Predict content by reading the title or topic."],
+["What is the first step a student should take before listening to an audio source like a TED Talk?", "Yes/No question"],
+["Which question type would 'Do you study every day?' be categorized as?", "Wh-question"],
+["Which question type would 'How many hours do you study?' be categorized as?", "They contain more authentic vocabulary, natural speed, and real-world sentence structures."],
+["What is the main argument for using authentic audio sources like TED Talks over textbook exercises?", "The teacher observes errors and provides feedback/corrections at the end of the session."],
+["In the Question Carousel, what is the teacher's role regarding student errors?", "Personal question"]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
