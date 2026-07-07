@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCA Python – Unit 1 Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f6f3ee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 3rem;
+  }
+
+  /* Progress bar */
+  #progress-bar-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: #e0d9d0;
+    z-index: 100;
+  }
+  #progress-bar {
+    height: 100%;
+    background: #2d5a7b;
+    transition: width 0.3s ease;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+    margin-top: 0.5rem;
+  }
+  header h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.6rem;
+    color: #2d5a7b;
+    letter-spacing: 0.01em;
+  }
+  header p {
+    font-size: 0.85rem;
+    color: #8a8076;
+    margin-top: 0.3rem;
+  }
+
+  /* Card scene */
+  .scene {
+    width: 100%;
+    max-width: 560px;
+    height: 320px;
+    perspective: 1200px;
+    cursor: pointer;
+  }
+  .card {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+  }
+  .card.flipped { transform: rotateY(180deg); }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2rem 2.25rem;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .face-front {
+    background: #ffffff;
+    border: 1px solid #d6cfc4;
+    box-shadow: 0 2px 20px rgba(26,35,50,0.08);
+    color: #2c2c2c;
+  }
+  .face-back {
+    background: #2d5a7b;
+    color: #f0f6fa;
+    transform: rotateY(180deg);
+  }
+
+  .face-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin-bottom: 0.75rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .face-front .face-label { color: #2d5a7b; }
+  .face-back  .face-label { color: #f0f6fa; }
+
+  .face-text {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.1rem;
+    line-height: 1.65;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .hint {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    font-size: 0.78rem;
+    color: #aaa49c;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 560px;
+    justify-content: center;
+  }
+  .btn {
+    background: #2d5a7b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.4rem;
+    font-size: 0.9rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-shuffle {
+    background: transparent;
+    color: #2d5a7b;
+    border: 2px dashed #2d5a7b;
+  }
+  .btn-shuffle:hover:not(:disabled) { background: rgba(45,90,123,0.07); }
+
+  #counter {
+    font-size: 0.85rem;
+    color: #7a7368;
+    min-width: 70px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .kb-hint {
+    margin-top: 1.1rem;
+    font-size: 0.75rem;
+    color: #b0a99f;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  @media (max-width: 480px) {
+    .scene { height: 290px; }
+    .face { padding: 1.5rem 1.25rem; }
+    .face-text { font-size: 1rem; }
+    .kb-hint { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+
+<header>
+  <h1>BCA Python &ndash; Unit 1</h1>
+  <p id="subtitle">62 Flashcards</p>
+</header>
+
+<div class="scene" id="scene" role="button" aria-label="Flip card" tabindex="0">
+  <div class="card" id="card">
+    <div class="face face-front">
+      <div class="face-label">Question</div>
+      <div class="face-text" id="q-text"></div>
+      <div class="hint">Tap to reveal answer</div>
+    </div>
+    <div class="face face-back">
+      <div class="face-label">Answer</div>
+      <div class="face-text" id="a-text"></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn" id="btn-prev">&larr; Prev</button>
+  <span id="counter">1 / 62</span>
+  <button class="btn" id="btn-next">Next &rarr;</button>
+  <button class="btn btn-shuffle" id="btn-shuffle">&#x21C4; Shuffle</button>
+</div>
+
+<p class="kb-hint">Keyboard: &larr; &rarr; to navigate &nbsp;&bull;&nbsp; Space to flip</p>
+
+<script>
+const DATA = [["Who is credited with conceiving the Python programming language in the late 1980s?", "Guido van Rossum"], ["In which month and year did the actual usage of Python begin?", "December 1989"], ["What was the significance of the release of Python 3.0 in late 2008 regarding older codebases?", "It was not backward compatible, requiring developers to update their existing code."], ["Python was named after which British comedy group?", "Monty Python"], ["Term: Interpreted Language", "Definition: A language where the code is executed line-by-line by an interpreter rather than being compiled into machine code beforehand."], ["In Python, a variable's type is determined at runtime rather than being declared explicitly. This means Python is _____ typed.", "dynamically"], ["Which Python web framework is described as a 'batteries-included', high-level framework that includes an ORM and admin panel?", "Django"], ["Which lightweight Python 'micro-framework' is designed for flexibility and small-scale services or APIs?", "Flask"], ["What is the primary Python library used for 2D game development, handling graphics, sound, and input?", "PyGame"], ["Which Python library provides the foundation for numerical computing by offering efficient multi-dimensional arrays?", "NumPy"], ["Term: Web Scraping", "Definition: The automated process of extracting information from websites by parsing their HTML or XML content."], ["Which Python library is specifically used to parse HTML and XML documents to navigate the document tree?", "BeautifulSoup"], ["In the context of AI and Machine Learning, which two frameworks are leading choices for building neural networks in Python?", "TensorFlow and PyTorch"], ["What hardware platform commonly uses Python for embedded applications and IoT projects?", "Raspberry Pi"], ["In a Python program, what is the purpose of the 'shebang' line ($#! /usr/bin/python$)?", "It ensures compatibility with Unix-based systems by specifying the interpreter location."], ["What syntax feature does Python use instead of curly braces to define blocks of code?", "Indentation (white space)"], ["According to the PEP 8 style guide, how many spaces are recommended per indentation level in Python?", "4 spaces"], ["Rule: Python Identifiers", "Definition: Names for variables, functions, or classes that must start with a letter or underscore and cannot start with a digit."], ["If you have two identifiers named 'total' and 'Total', how does Python treat them?", "As two distinct identifiers, because Python is case-sensitive."], ["Which three Python keywords are the only ones that begin with a capital letter?", "True, False, and None"], ["What type of error is triggered if a programmer attempts to use a reserved keyword as a variable name?", "SyntaxError"], ["Concept: Floor Division", "Symbol: $//$. Function: Divides two numbers and returns the largest integer less than or equal to the result."], ["What is the result of the expression $7 \\% 2$ in Python?", "1 (the remainder of the division)"], ["Which operator is used to calculate the result of one number raised to the power of another ($a^b$)?", "$**$ (Exponentiation)"], ["The _____ operator is used to check if two variables refer to the exact same object in memory.", "identity (is)"], ["Which operators are used to check if a specific value exists within a sequence like a list or a string?", "Membership operators (in, not in)"], ["According to operator precedence, which operator is unique for being right-to-left associative?", "The exponentiation operator ($**$)"], ["In an expression with multiple operators, which symbol can a programmer use to explicitly override default precedence?", "Parentheses ()"], ["Data Type: int", "Definition: Represents whole numbers of any size, limited only by the available memory of the machine."], ["Data Type: float", "Definition: Represents real numbers containing a decimal point, typically stored using 64-bit double-precision."], ["In Python, the 'bool' data type treats the value 'True' as equivalent to the integer _____ in numeric contexts.", "1"], ["What term describes a data type, such as a string, that cannot be modified in place once it has been created?", "Immutable"], ["The process where the Python interpreter automatically converts one data type to another during a calculation is known as _____ conversion.", "implicit (or type coercion)"], ["What happens to the fractional part of a float when it is converted to an integer using the $int()$ function?", "It is truncated (dropped), not rounded."], ["Why does the expression $int('25.5')$ result in a ValueError?", "Because the string contains a decimal point, and $int()$ only converts strings that represent whole integers."], ["How does an 'expression' differ from a 'statement' in Python code?", "An expression evaluates to a single value, while a statement represents an action or command for the interpreter to execute."], ["What is the default data type returned by the $input()$ function?", "String (str)"], ["Which $print()$ function parameter allows the user to specify a custom string to be displayed between multiple arguments?", "The 'sep' parameter"], ["Which $print()$ function parameter is used to change the character printed at the end of the output (defaulting to a newline)?", "The 'end' parameter"], ["What is the model of program functionality that involves gathering data, performing calculations, and displaying results?", "Input-Process-Output (I/O)"], ["Which type of quotes are used to create strings that span multiple lines and preserve line breaks?", "Triple quotes (''' or \"\"\")"], ["In string indexing, what integer refers to the very last character of the string?", "-1"], ["What is the result of trying to modify a single character in a string using indexing (e.g., $s[0] = 'A'$)?", "A TypeError is raised because strings are immutable."], ["String Slicing: $[n:m]$", "The slice starts at index $n$ and ends at index $m-1$ (index $m$ is excluded)."], ["What slicing syntax is used to return a complete, reversed copy of a string?", "$[::-1]$ (a step of -1)"], ["What is the result of using the multiplication operator ($*$) on a string and an integer (e.g., $'Ab' * 3$)?", "The string is repeated that number of times ($'AbAbAb'$)."], ["Which string method combines a list of strings into a single string with a separator between them?", "The $.join()$ method"], ["What is the difference between the string methods $.find()$ and $.index()$ when the requested substring is missing?", "$.find()$ returns -1, whereas $.index()$ raises a ValueError."], ["Which string method is used to remove all leading and trailing white space from a string?", "$.strip()$"], ["Modern Python string formatting that uses an 'f' prefix and curly braces for variable names is called _____.", "f-strings (or formatted string literals)"], ["What f-string format specifier is used to display a floating-point number rounded to exactly two decimal places?", "$:.2f$"], ["In an f-string, what does the expression $f'{x=}'$ (for $x = 10$) produce?", "x=10' (self-documenting expression)"], ["What built-in function returns the total number of characters in a string?", "$len()$"], ["A _____ is the smallest individual unit in a Python program, such as a keyword or a punctuator.", "token"], ["Which punctuator is used in Python to allow multiple statements to be written on a single line?", "The semicolon ($;$)"], ["What is the result of using the $+$ operator on two strings?", "Concatenation (joining them end-to-end)."], ["What error occurs if you try to concatenate a string and an integer directly (e.g., $'Age: ' + 25$)?", "TypeError"], ["Which string method capitalises only the very first character of the entire string?", "$.capitalize()$"], ["Which string method returns 'True' only if every alphabetic character in the string is lowercase?", "$.islower()$"], ["In string slicing, what is the default 'step' value if it is not explicitly provided?", "1"], ["What is the primary function of the $.replace(\"old\", \"new\")$ method?", "It returns a new string with all occurrences of the \"old\" substring substituted with the \"new\" one."], ["Python is described as a 'multi-paradigm' language. Which three programming styles does it explicitly support?", "Procedural, object-oriented, and functional."]];
+
+let deck = [...DATA];
+let idx = 0;
+let flipped = false;
+
+const card   = document.getElementById('card');
+const qText  = document.getElementById('q-text');
+const aText  = document.getElementById('a-text');
+const counter= document.getElementById('counter');
+const bar    = document.getElementById('progress-bar');
+const btnPrev= document.getElementById('btn-prev');
+const btnNext= document.getElementById('btn-next');
+
+function render() {
+  qText.textContent = deck[idx][0];
+  aText.textContent = deck[idx][1];
+  counter.textContent = (idx + 1) + ' / ' + deck.length;
+  bar.style.width = ((idx + 1) / deck.length * 100) + '%';
+  btnPrev.disabled = idx === 0;
+  btnNext.disabled = idx === deck.length - 1;
+  if (flipped) { card.classList.remove('flipped'); flipped = false; }
+}
+
+function flip() {
+  flipped = !flipped;
+  card.classList.toggle('flipped', flipped);
+}
+
+document.getElementById('scene').addEventListener('click', flip);
+document.getElementById('scene').addEventListener('keydown', e => { if(e.key===' '||e.key==='Enter'){e.preventDefault();flip();} });
+
+btnPrev.addEventListener('click', () => { if(idx>0){idx--;render();} });
+btnNext.addEventListener('click', () => { if(idx<deck.length-1){idx++;render();} });
+
+document.getElementById('btn-shuffle').addEventListener('click', () => {
+  for(let i=deck.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [deck[i],deck[j]]=[deck[j],deck[i]];
+  }
+  idx=0; flipped=false; render();
+});
+
+document.addEventListener('keydown', e => {
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  if(e.key==='ArrowLeft'){ if(idx>0){idx--;render();} }
+  else if(e.key==='ArrowRight'){ if(idx<deck.length-1){idx++;render();} }
+  else if(e.key===' '){ e.preventDefault(); flip(); }
+});
+
+render();
+</script>
+</body>
+</html>
