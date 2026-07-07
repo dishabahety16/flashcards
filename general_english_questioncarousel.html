@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Question Carousel — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Question Carousel</h1>
+  <p>General English — 60 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["Define the 'Question Carousel' activity.", "It is an interactive speaking activity where students move around the classroom to ask and answer questions with various classmates."],
+["How often do students typically change partners during a Question Carousel session?", "Students rotate to a new person every 90 seconds."],
+["What is the primary objective of the Question Carousel for students who fear speaking English?", "The activity builds fluency and confidence by providing practice with 8\u201310 different classmates in a single session."],
+["Identify the four types of questions used in a Question Carousel.", "The four types are Yes/No questions, Wh-questions, Personal questions, and Opinion questions."],
+["In the Q\u00b7A\u00b7R\u00b7F Framework, what does the letter 'Q' represent?", "It stands for Question types, which include Yes/No, Wh-, Personal, and Opinion questions."],
+["In the Q\u00b7A\u00b7R\u00b7F Framework, what does the letter 'A' signify regarding student responses?", "It signifies Answer structure, requiring students to provide full sentence answers instead of one-word replies."],
+["What action does the 'R' in the Q\u00b7A\u00b7R\u00b7F Framework require of students?", "It requires students to rotate and move on to a new partner after each exchange."],
+["What does the 'F' in the Q\u00b7A\u00b7R\u00b7F Framework stand for?", "It stands for Feedback, where students listen for corrections at the end to apply in the next round."],
+["According to the Question Word Cheat Sheet, what type of information does the word 'What' seek?", "The word 'What' is used to ask about a thing or specific information."],
+["According to the Question Word Cheat Sheet, what does the word 'Where' indicate?", "The word 'Where' is used to ask about a place."],
+["What specific information is requested when using the question word 'When'?", "The word 'When' is used to request information regarding time."],
+["What type of subject is being identified when using the question word 'Who'?", "The word 'Who' is used to identify a person."],
+["What is the primary function of the question word 'Why'?", "The word 'Why' is used to ask for a reason."],
+["What does the question word 'How' describe in a conversation?", "The word 'How' describes the manner or method of an action."],
+["Complete the memory rhyme: 'What is a thing, Where is a place, When is a time and _____.'", "Who is a face."],
+["Correct the following question form: 'Where you are going?'", "The correct form is 'Where are you going?'."],
+["Correct the following question form: 'What your name is?'", "The correct form is 'What is your name?'."],
+["Correct the following question form: 'You like coffee?'", "The correct form is 'Do you like coffee?'."],
+["Correct the following question form: 'Why you are absent?'", "The correct form is 'Why are you absent?'."],
+["Correct the following question form: 'When the class starts?'", "The correct form is 'When does the class start?'."],
+["Where must the auxiliary verb be placed in a correctly formed English question?", "The auxiliary verb must come before the subject."],
+["What three areas of language does the teacher observe during a Question Carousel?", "The teacher observes pronunciation, grammar, and fluency."],
+["List three of the five main purposes of the Question Carousel activity.", "Three purposes are to encourage oral interaction, improve question-forming ability, and increase speaking confidence."],
+["Why is the Question Carousel described as a 'learner-centred' activity?", "It is learner-centred because students perform the majority of the speaking and questioning rather than the teacher."],
+["Define the concept of 'listening for gist'.", "It means understanding the overall message or main idea of an audio segment without catching every single word."],
+["Define the concept of 'listening for detail'.", "It involves identifying specific facts, such as names, numbers, examples, or dates."],
+["What are podcasts particularly useful for training in English learners?", "Podcasts train the ear to understand real speech at natural speeds with authentic pauses and accents."],
+["What is the typical structure of an interview in terms of participant roles?", "An interview involves a host asking structured questions to a guest."],
+["Define a TED Talk.", "A TED Talk is a short, powerful speech delivered by an expert on a diverse range of topics."],
+["What are the three structural parts of a TED Talk?", "The three parts are the Hook (opening), the Main argument, and the Conclusion."],
+["In the G\u00b7D\u00b7S Framework for listening, what does 'S' represent?", "It represents Strategy, which follows the steps of Predict, Listen, Note, and Review."],
+["Complete the memory rhyme for listening: 'Gist is the forest, detail is the tree \u2014 first see the whole, ____.'", "Then zoom in to see."],
+["When should the 'Predict' listening strategy be applied?", "This strategy should be used before the audio begins by reading the title or topic."],
+["How does 'Focus on stress' help a listener during fast speech?", "It helps the listener catch the most important key words that carry the meaning."],
+["What is the purpose of using 'context clues' while listening?", "Context clues allow a listener to guess the meaning of unknown words based on the surrounding language."],
+["What is the recommended method for note-taking during a listening exercise?", "The listener should write down keywords rather than full sentences."],
+["What should a listener focus on during the 'Re-listen' phase of the strategy?", "The listener should focus specifically on the information they missed during the first listen."],
+["What elements might be found in the 'Hook' of a TED Talk?", "The Hook may contain a surprising fact, a personal story, or a provocative question."],
+["What specific transition words should a listener look for to identify a main argument?", "Listeners should listen for words like 'because', 'therefore', and 'however'."],
+["What kind of information is typically provided as 'Evidence' in a speech?", "Evidence usually includes data, specific examples, stories, names, and numbers."],
+["What two elements are generally included in the conclusion of a TED Talk?", "The conclusion typically includes a summary of the talk and a call to action."],
+["Why do good listeners need both gist and detail listening skills?", "Gist helps a listener follow the overall conversation, while detail allows them to answer specific questions."],
+["What is the cognitive benefit of the 'Predict' strategy?", "It activates background knowledge and prepares the brain to recognise relevant vocabulary more quickly."],
+["How does a Wh-question differ from a Yes/No question in terms of expected response?", "A Wh-question requires a detailed answer, whereas a Yes/No question only requires a simple affirmation or negation."],
+["What identifies an 'Opinion' question in a Question Carousel?", "An opinion question asks for a personal viewpoint and often begins with 'Why' or 'What do you think'."],
+["What is the role of the teacher during the rotation phase of a Question Carousel?", "The teacher monitors the students' language use and notes errors for later feedback."],
+["Why are podcasts considered more effective than textbooks for learning authentic pronunciation?", "Podcasts provide natural speech and real-world vocabulary that are often missing from scripted textbook dialogues."],
+["The listening strategy sequence is: _____ -> Listen -> Note -> Review.", "Predict"],
+["Identify a specific 'detail' that might be noted from an interview transcript.", "A specific detail could be a percentage, a date, or the name of a person mentioned by the guest."],
+["State the purpose of a 'Call to Action' in a TED Talk.", "It encourages the audience to take a specific step or change a behaviour based on the talk's message."],
+["In a Question Carousel, what is the consequence of giving one-word replies?", "One-word replies violate the 'Answer structure' rule of providing full sentences to build fluency."],
+["What kind of questions are 'Where do you live?' and 'Who is your role model?' classified as?", "These are classified as Personal questions."],
+["What does a listener identify when they determine the 'gist' of a talk?", "They identify the overall message or the core theme of the speaker's presentation."],
+["What is the first thing a listener should look for when a TED Talk begins?", "The listener should look for the 'Hook', which is the speaker's first strong statement or story."],
+["How does the Question Carousel make learning 'lively and student-centred'?", "It creates a dynamic environment where students are constantly active and communicating with different peers."],
+["Which question word would you use to frame a question for the answer: 'I go to college by bus'?", "The correct question word is 'How'."],
+["Which question word is used when the answer specifies a person, such as 'Dr. Kalam'?", "The question word is 'Who'."],
+["What is the primary difference between traditional teacher-led classes and the Question Carousel?", "In traditional classes the teacher speaks most of the time, whereas in the carousel every student is actively speaking."],
+["List the sequence of parts in a well-structured TED Talk argument.", "The sequence consists of the Hook, the Main Argument with Evidence, and the Conclusion."],
+["What should a student do with the teacher's feedback at the end of a carousel session?", "Students should apply the corrections to their speech in the next round or future speaking activities."]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
