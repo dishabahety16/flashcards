@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hunt Word — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Hunt Word</h1>
+  <p>General English — 65 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["What is the primary focus of the Communicative Component in English training?", "Developing the practical use of English in real-life situations."],
+["The Communicative Component specifically trains students in which two language skills?", "Listening and speaking skills."],
+["Teaching Method: Engaging students through games and tasks is known as _____ teaching.", "Activity-based."],
+["Which teaching method encourages real-life language use?", "Communicative language teaching."],
+["Collaborative learning involves pair work, group discussion, and _____ interaction.", "Peer."],
+["Which method uses audio clips, interviews, or speeches to improve comprehension?", "Listening practice."],
+["The Question-answer method is primarily used to improve comprehension and _____ response.", "Spontaneous."],
+["Which teaching method utilizes posters, pictures, and classroom objects?", "Visual learning."],
+["In the _____ method, the teacher models a task before students perform it.", "Demonstration."],
+["Name one type of activity used for interactive speaking practice.", "Role play (or description/oral presentation)."],
+["Term: Word Hunt", "Definition: A vocabulary-building activity where students identify, collect, or classify words related to a topic."],
+["Word Hunt helps learners improve word power, understanding of meaning, and _____.", "Spelling."],
+["One purpose of Word Hunt is to enhance _____ thinking.", "Quick."],
+["In the Word Hunt methodology, what is the teacher's first step?", "Introducing a topic (e.g., \"school\" or \"travel\")."],
+["How can a teacher make the Word Hunt activity more interesting for students?", "By timing the activity."],
+["Word Hunt Vocabulary Match: Which field is associated with a stethoscope?", "Hospital."],
+["Word Hunt Vocabulary Match: Which field is associated with a tractor?", "Agriculture."],
+["Word Hunt Vocabulary Match: Which field is associated with a bat?", "Sports."],
+["Word Hunt Vocabulary Match: Which field is associated with chalk?", "Classroom."],
+["Verb of Sight: To catch a brief or partial view of something.", "Glimpse."],
+["Verb of Sight: To look fixedly or vacantly at someone or something with eyes wide open.", "Stare."],
+["Verb of Sight: To look closely or with difficulty at something.", "Peer."],
+["Verb of Sight: To inspect someone or something in detail to determine its condition.", "Examine."],
+["Verb of Sight: To look steadily and intently, especially in admiration, surprise, or thought.", "Gaze."],
+["Verb of Sight: To notice or recognize something, especially suddenly or with effort.", "Spot."],
+["Which precise verb describes speaking in a very quiet voice?", "Whisper (or murmur)."],
+["Which precise verb describes speaking with strong disagreement or heat?", "Argue."],
+["Which precise verb describes crying out suddenly in surprise or strong emotion?", "Exclaim."],
+["Which precise verb describes demanding something forcefully or not accepting a refusal?", "Insist."],
+["What is a more advanced synonym for the phrase \"very big\"?", "Enormous."],
+["What is a more advanced synonym for the phrase \"very small\"?", "Tiny."],
+["What is a more advanced synonym for the phrase \"very happy\"?", "Ecstatic."],
+["Identify the nouns in the following: \"Riya went to the park with her brother Arun.\"", "Riya, park, brother, Arun."],
+["Identify the verbs in the following: \"The teacher explained the lesson and asked the students to write.\"", "Explained, asked, write."],
+["In the phrase \"bright sunny day,\" which words are the adjectives?", "Bright, sunny."],
+["In the phrase \"narrow path lined with tall green trees,\" identify the adjectives.", "Narrow, tall, green."],
+["Identify the adverb in the sentence: \"Rahul ran quickly towards the bus stop.\"", "Quickly."],
+["Identify the adverb in the sentence: \"He looked around nervously as the bus arrived late.\"", "Nervously."],
+["Identify the adverb in the sentence: \"He eagerly waited for the bus.\"", "Eagerly."],
+["Identify the prepositions: \"The cat sat under the table and looked at the food on the plate.\"", "Under, at, on."],
+["Identify the prepositions: \"It jumped onto the chair and then moved towards the window.\"", "Onto, towards."],
+["List three synonyms for \"happy\" provided in the text.", "Joyful, glad, cheerful."],
+["What is the antonym of \"dark\" as used in the Unit IV exercises?", "Bright."],
+["What is the antonym of \"night\" as used in the Unit IV exercises?", "Morning."],
+["What is the antonym of \"small\" as used in the Unit IV exercises?", "Big."],
+["Identify the verb in the past tense: \"Yesterday, Meena visited her grandmother.\"", "Visited."],
+["Identify the verb in the present tense: \"Today, she is resting at home.\"", "Is resting."],
+["Identify the verb in the future tense: \"She will go back to school tomorrow.\"", "Will go."],
+["Identify the pronouns in the sentence: \"Anita gave her book to Ravi because he forgot his.\"", "Her, he, his."],
+["Identify the pronouns in the sentence: \"She told him that he should bring it tomorrow.\"", "She, him, he, it."],
+["In the Mixed Word Hunt, find the two adverbs in: \"The young boy happily climbed the tall tree... He carefully picked some ripe mangoes.\"", "Happily, carefully."],
+["In the Mixed Word Hunt, find the two adjectives in: \"The young boy happily climbed the tall tree... He carefully picked some ripe mangoes.\"", "Young, tall (or ripe)."],
+["Which cognitive level of Bloom's Taxonomy involves recalling facts, definitions, and key terms?", "L1 (Recall)."],
+["Which cognitive level involves explaining, describing, and summarizing concepts in your own words?", "L2 (Understand)."],
+["Which cognitive level focuses on using grammar rules, writing formats, and demonstrating skills?", "L3 (Apply)."],
+["Which cognitive level involves analyzing, comparing, and breaking down literary elements?", "L4 (Analyze)."],
+["Which cognitive level involves critiquing author's choices and arguing positions?", "L5 (Evaluate)."],
+["Unit IV trains students to become confident in participating in _____ activities.", "Classroom."],
+["Learner-centered activities in this unit aim to improve which communication-specific skill?", "Fluency (or confidence/observation)."],
+["In a Word Hunt, students might _____ collected words to organize their learning.", "Categorize."],
+["Verb of Sight: To observe something more carefully to see details.", "Notice (or observe)."],
+["Verb of Sight: To see something momentarily, often used in the phrase \"caught _____ of.\"", "Sight."],
+["Word Hunt purpose: To strengthen _____.", "Spelling."],
+["One method for Word Hunt is to divide the class into _____ to increase interest.", "Teams."],
+["According to the unit summary, the teacher discusses meaning, usage, and _____ after a Word Hunt.", "Pronunciation."]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
