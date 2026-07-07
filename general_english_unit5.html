@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 5 — Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a2332; --paper: #f6f3ee; --accent: #2d5a7b; --accent-light: #e8f0f6;
+    --muted: #7a8694; --border: #d6cfc4; --card-bg: #ffffff; --flip-bg: #2d5a7b;
+    --flip-text: #f0f6fa; --radius: 12px; --shadow: 0 2px 20px rgba(26,35,50,0.08);
+  }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif; background: var(--paper);
+    color: var(--ink); min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 1.5rem 1rem 2rem;
+  }
+  header { text-align: center; margin-bottom: 1.5rem; max-width: 600px; }
+  header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  header p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem;
+  }
+  .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.25rem; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .progress-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; text-align: right;
+  }
+  .card-scene {
+    width: 100%; max-width: 560px; height: 320px; perspective: 900px;
+    margin-bottom: 1.25rem; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .card {
+    width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 2rem 2.25rem;
+    text-align: center; box-shadow: var(--shadow); overflow-y: auto;
+  }
+  .card-front { background: var(--card-bg); border: 1px solid var(--border); }
+  .card-back { background: var(--flip-bg); color: var(--flip-text); transform: rotateY(180deg); }
+  .card-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.5;
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-back .card-label { color: var(--flip-text); }
+  .card-text { font-size: 1.1rem; line-height: 1.55; }
+  .tap-hint {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); margin-top: auto; padding-top: 0.75rem; opacity: 0.6;
+  }
+  .card.flipped .card-front .tap-hint { visibility: hidden; }
+  .controls { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border);
+    background: var(--card-bg); color: var(--ink); padding: 0.55rem 1.1rem;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: var(--card-bg); border-color: var(--border); }
+  .btn-shuffle { background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: 0.78rem; }
+  .btn-shuffle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+  .kbd-hints {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.7rem; color: var(--muted); opacity: 0.5;
+  }
+  .kbd-hints kbd {
+    font-family: inherit; background: var(--card-bg); border: 1px solid var(--border);
+    padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .card-scene { height: 290px; }
+    .card-face { padding: 1.5rem 1.25rem; }
+    .card-text { font-size: 1rem; }
+    header h1 { font-size: 1.15rem; }
+    .kbd-hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Unit 5</h1>
+  <p>General English — 75 Flashcards</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+</div>
+<div class="card-scene" id="cardScene">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <div class="card-label">Question</div>
+      <div class="card-text" id="questionText"></div>
+      <div class="tap-hint">Tap to reveal answer</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-label">Answer</div>
+      <div class="card-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="prev()">&#8592; Prev</button>
+  <button class="btn btn-shuffle" onclick="shuffle()">Shuffle</button>
+  <button class="btn" id="nextBtn" onclick="next()">Next &#8594;</button>
+</div>
+<div class="kbd-hints">
+  <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> navigate &middot; <kbd>Space</kbd> flip
+</div>
+<script>
+const DATA = [
+["In the context of giving directions, what is the function of a 'landmark'?", "It acts as a visual checkpoint to help the listener verify they are on the correct route."],
+["Which direction verb describes moving forward without turning?", "Go straight (or continue straight ahead)."],
+["What does the preposition 'opposite to' imply about two locations?", "They face each other across a road or passage."],
+["Which preposition describes a place located immediately beside another?", "Next to."],
+["Where is a building located if it is 'at the corner of' two streets?", "At the point where the two streets meet."],
+["When asking a stranger for directions, what is the recommended polite attention-getter?", "Excuse me."],
+["According to the unit, what are the three components of a complete direction sentence?", "An imperative verb, a direction word, and a landmark."],
+["Why are landmarks considered more reliable than distances (e.g., 200 metres) in directions?", "They provide visual recognition, which reduces the mental burden of measuring distance."],
+["The '3 Cs' of a good direction conversation are Clear, Complete, and _____.", "Confirmed."],
+["In the '3 Cs' framework, what does 'Confirmed' refer to?", "Ending with an arrival signal so the listener knows when they have reached the destination."],
+["What is the purpose of the phrase 'You can't miss it' at the end of directions?", "It provides confidence-boosting reassurance and signals the end of the instructions."],
+["What is the first step in the five-step process of converting a map into directions?", "Identify the starting point."],
+["What is the final step in the map-to-direction giving process?", "Signal arrival."],
+["Term: Slogan", "Definition: A short, catchy, and memorable phrase used to promote a product, campaign, or cause."],
+["Term: Caption", "Definition: A short description or comment placed beside or below an image to explain or enhance it."],
+["What is the primary difference between a slogan and a caption regarding images?", "A slogan can stand alone, whereas a caption must always accompany an image."],
+["In the SCREAM framework for slogans, what does the 'S' stand for?", "Short (typically 4\u20138 words)."],
+["In the SCREAM framework for slogans, what does the 'C' stand for?", "Catchy (using rhythm, rhyme, or alliteration)."],
+["In the SCREAM framework for slogans, what does the 'R' stand for?", "Relevant (directly connected to the cause or product)."],
+["In the SCREAM framework for slogans, what does the 'E' stand for?", "Emotional (creating a feeling like urgency, hope, or pride)."],
+["In the SCREAM framework for slogans, what does the 'A' stand for?", "Actionable (telling people what to do using imperative verbs)."],
+["In the SCREAM framework for slogans, what does the 'M' stand for?", "Memorable (easy to recall after one reading)."],
+["Which slogan technique involves matching end sounds, such as 'Save water today, for a brighter tomorrow'?", "Rhyme."],
+["Which slogan technique involves repeating starting sounds, such as 'Green is Great'?", "Alliteration."],
+["What is the function of 'Imperative verbs' in slogan writing?", "They act as command words that motivate the audience to take action."],
+["The technique of using opposing ideas for impact in a slogan is called _____.", "Contrast."],
+["What are the three questions to ask before writing a slogan for a social cause?", "What do I want people to DO, what do I want them to FEEL, and what is the ONE core word?"],
+["What is the fourth step in the six-step slogan writing process?", "Drafting the phrase in 4\u20138 words."],
+["Term: Bio-note", "Definition: A short, third-person description that introduces a person in a professional or academic way."],
+["How does a bio-note differ from a full CV in its presentation of information?", "A bio-note is a focused narrative paragraph for introduction, while a CV is a multi-page structured list for documentation."],
+["What grammatical person is required for a formal bio-note?", "Third person (He/She/They)."],
+["What is the typical word count range for a formal bio-note?", "60\u2013100 words."],
+["Which type of bio-note uses a first-person (I/My) perspective?", "Informal bio-note."],
+["Where would an informal bio-note typically be used?", "Social media profiles, club introductions, or student magazines."],
+["In the NPAECI framework for bio-notes, what does 'A' stand for?", "Achievements (notable accomplishments or awards)."],
+["In the NPAECI framework for bio-notes, what does 'C' stand for?", "Current affiliation (where the person works or studies now)."],
+["Why is 'Educational background' often considered optional for established professionals in a bio-note?", "Their current role and achievements usually establish sufficient credibility for the audience."],
+["What is the recommended word count range for a student bio-note specifically?", "50\u201380 words."],
+["Which tense is used to describe a student's current enrolment in a bio-note?", "Present simple (e.g., 'She is a student')."],
+["Which tense is used to describe completed achievements in a student bio-note?", "Present perfect (e.g., 'He has won')."],
+["How should a career goal be phrased in a student bio-note using the present simple?", "Using 'aims to' or 'aspires to' followed by an infinitive."],
+["List three things to avoid in a formal student bio-note.", "First-person pronouns, vague language, and irrelevant personal details (like religion or family names)."],
+["Why is the third person preferred over the first person in formal bio-notes?", "It creates professional distance and objectivity, sounding like an endorsement rather than self-promotion."],
+["In a bio-note, why is 'She won the State Science Olympiad' better than 'She is a good student'?", "It provides specific evidence instead of a vague, unverifiable claim."],
+["What is the definition of a self-introduction?", "A brief, structured speech in which a person presents key information about themselves to an audience."],
+["How many seconds does research suggest it takes for a listener to form a first impression?", "Seven seconds."],
+["What are the four purposes of a self-introduction mentioned in the text?", "Creates first impressions, builds confidence, shows communication skills, and supports professional networking."],
+["In the GNECSIGC structure for self-introductions, what does 'E' stand for?", "Educational background (degree and field of study)."],
+["In the GNECSIGC structure for self-introductions, what does 'S' stand for?", "Strengths (key professional qualities)."],
+["What is the correct final step in the 8-step self-introduction framework?", "Closing (Thank you)."],
+["Why is 'word-for-word memorisation' considered a mistake in self-introductions?", "It sounds robotic, discourages eye contact, and can lead to panic if a single word is forgotten."],
+["Which self-introduction delivery tip involves visual connection with the audience?", "Maintain eye contact."],
+["What is the recommended length for an academic self-introduction?", "45\u201360 seconds."],
+["How does the recommended length for a professional self-introduction compare to an academic one?", "It is longer, typically ranging from 60\u201390 seconds."],
+["What is the expected tone for a professional self-introduction in a job interview?", "Formal and precise."],
+["How should a greeting be adapted from an academic to a professional context?", "Change 'Good morning, everyone' to 'Good morning, thank you for this opportunity'."],
+["What content should a student focus on in an academic self-introduction?", "Course, college, academic interests, and learning goals."],
+["What content should be emphasised in a professional self-introduction?", "Degree, specific skills with evidence, achievements, and contribution value."],
+["What are the three steps of the Adaptation Rule for self-introductions?", "Identify the audience, determine what they want to know, and choose the appropriate trust-building tone."],
+["Why should personal hobbies like 'playing cricket' be omitted from a professional interview introduction?", "They are usually irrelevant to the employer, who prioritises professional skills and evidence of ability."],
+["In a professional introduction, why should you mention a completed project?", "It provides concrete evidence of your skills, making your claims more credible to an interviewer."],
+["What is the primary function of the 'Closing' in a self-introduction?", "To politely signal the end of the speech and acknowledge the audience."],
+["Which preposition shows something is 'in the middle of two places'?", "Between."],
+["Which direction phrase is used to confirm you are on the correct path?", "Is this the right way to...?"],
+["What is a 'flyover' in the context of direction landmarks?", "A bridge that carries one road over another."],
+["In the slogan writing process, what is the 'SCREAM test' used for?", "To evaluate a drafted slogan against the six features of effectiveness."],
+["Which social cause topic often uses the 'progression' technique (e.g., Hands -> Land -> India)?", "Clean India (Swachh Bharat)."],
+["True or False: A bio-note should include detailed family history and religious background.", "False (these are irrelevant personal details to be avoided)."],
+["What is the mnemonic for the 8-step self-introduction structure?", "GNECSIGC (Greet, Name, Education, College, Strengths, Interests, Goal, Close)."],
+["Which tense is used for a 'Past project' in a bio-note?", "Past simple (e.g., 'She completed a project')."],
+["Why is the use of filler words like 'um' and 'ah' discouraged in self-introductions?", "They indicate a lack of confidence and distract from the message."],
+["In map-based directions, what does 'Take the second exit' usually refer to?", "A specific turn-off at a roundabout."],
+["What kind of language is recommended for all self-introductions to ensure accessibility?", "Simple language."],
+["How should you start the name section of a self-introduction?", "By stating your full name clearly."],
+["What is the 'Action Target' question in slogan writing?", "What do I want people to DO?"]
+];
+let order = [...Array(DATA.length).keys()];
+let idx = 0;
+const card = document.getElementById('card');
+const qText = document.getElementById('questionText');
+const aText = document.getElementById('answerText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+function render() {
+  const i = order[idx];
+  qText.textContent = DATA[i][0];
+  aText.textContent = DATA[i][1];
+  card.classList.remove('flipped');
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === order.length - 1;
+  const pct = ((idx + 1) / order.length * 100).toFixed(0);
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = (idx + 1) + ' / ' + order.length;
+}
+function flip() { card.classList.toggle('flipped'); }
+function next() { if (idx < order.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+function shuffle() {
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  idx = 0; render();
+}
+document.getElementById('cardScene').addEventListener('click', flip);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+render();
+</script>
+</body>
+</html>
