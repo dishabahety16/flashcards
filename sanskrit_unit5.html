@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanskrit Unit 5 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>Sanskrit &mdash; Unit 5</h1>
+<p class="subtitle">75 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["Who is the author of the Sanskrit epic poem माघः तथा शिशुपालवधम् (Māgha and the Śiśupālavadham)?", "The poet माघः (Māghaḥ)."], ["Which classical Indian epic serves as the primary source for the story of शिशुपालवधम् (Śiśupālavadham)?", "The महाभारतम् (Mahābhāratam)."], ["In which specific section of the Mahābhārata is the slaying of Śiśupāla narrated?", "The सभापर्वन् (Sabhāparvan)."], ["At which Vedic royal sacrifice is the episode of the Śiśupālavadham set?", "The राजसूयः (Rājasūyaḥ) sacrifice performed by King Yudhiṣṭhira."], ["Who is the hero of the poem शिशुपालवधम् (Śiśupālavadham)?", "कृष्णः (Kṛṣṇaḥ)."], ["Who is the antagonist king slain by Kṛṣṇa in Māgha's epic?", "शिशुपालः (Śiśupālaḥ)."], ["In what approximate time period did the poet माघः (Māgha) live?", "The 7th–8th century A.D."], ["How many cantos comprise the Mahākāvya शिशुपालवधम् (Śiśupālavadham)?", "20 cantos."], ["Which specific poetic quality is traditionally attributed to the poet Kālidāsa?", "उपमा (Upamā), or excellence in simile."], ["For which stylistic quality is the poet भारविः (Bhāravi) celebrated?", "अर्थगौरवम् (Arthagauravam), or depth and weightiness of meaning."], ["What is the defining poetic quality for which माघः (Māgha) is traditionally praised?", "पदलालित्यम् (Padalālityam), or grace and sweetness of diction."], ["Māgha's epic belongs to a group of five classical Sanskrit Mahākāvyas known as the _____.", "पञ्चमहाकाव्यानि (Pañcamahākāव्यानि)."], ["Which weapon does Kṛṣṇa use to slay Śiśupāla?", "The सुदर्शनचक्रम् (Sudarśanacakram), or discus weapon."], ["How many offences did Kṛṣṇa promise Śiśupāla's mother he would pardon before taking action?", "One hundred offences."], ["Identify the mnemonic \"KAM — BHA — MAG\" used to remember the qualities of the three great poets.", "Kālidāsa = Upamā; Bhāravi = Arthagauravam; Māgha = Padalālityam."], ["Translate the following traditional verse of praise:\n\nनवसर्गगते माघे नवसन्धौ च भारवौ।", "\"When Māgha has gone nine cantos, and Bhāravi reaches the ninth juncture [there the true greatness lies].\""], ["What does the term लट्-लकारः (Laṭ-lakāra) signify in Sanskrit grammar?", "The present tense (वर्तमानकालः)."], ["In Sanskrit verb conjugation, what is the term for the 3rd person?", "प्रथमपुरुषः (Prathamapuruṣaḥ)."], ["In Sanskrit verb conjugation, what is the term for the 2nd person?", "मध्यमपुरुषः (Madhyamapuruṣaḥ)."], ["In Sanskrit verb conjugation, what is the term for the 1st person?", "उत्तमपुरुषः (Uttamapuruṣaḥ)."], ["What are the three grammatical numbers (वचनानि) in Sanskrit verb conjugation?", "एकवचनम् (Singular), द्विवचनम् (Dual), and बहुवचनम् (Plural)."], ["What are the standard Laṭ-lakāra endings for the प्रथमपुरुषः (3rd person)?", "-ति (-ti), -तः (-taḥ), and -न्ति (-nti)."], ["What are the standard Laṭ-lakāra endings for the मध्यमपुरुषः (2nd person)?", "-सि (-si), -थः (-thaḥ), and -थ (-tha)."], ["What are the standard Laṭ-lakāra endings for the उत्तमपुरुषः (1st person)?", "-मि (-mi), -वः (-vaḥ), and -मः (-maḥ)."], ["What is the present stem for the root √गम् (gam - to go)?", "गच्छ् (gacch-)."], ["Provide the उत्तमपुरुषः एकवचनम् form of √गम् (gam).", "गच्छामि (gacchāmi)."], ["What is the present stem for the root √स्था (sthā - to stand)?", "तिष्ठ् (tiṣṭh-)."], ["What is the प्रथमपुरुषः बहुवचनम् form of √पठ् (paṭh - to read)?", "पठन्ति (paṭhanti)."], ["How is the stem formed for 4th class roots like √नृत् (nṛt - to dance) and √कुप् (kup - to get angry)?", "By adding -य (-ya) to the root (e.g., नृत्य-, कुप्य-)."], ["How is the stem formed for 10th class roots like √कथ् (kath - to narrate)?", "By adding -अय (-aya) to the root (e.g., कथय-)."], ["Provide the प्रथमपुरुषः (3rd person) forms of the irregular root √अस् (as - to be).", "अस्ति (asti), स्तः (staḥ), and सन्ति (santi)."], ["Provide the उत्तमपुरुषः (1st person) forms of √अस् (as - to be).", "अस्मि (asmi), स्वः (svaḥ), and स्मः (smaḥ)."], ["Describe the stem alternation in the root √कृ (kṛ - to do) during conjugation.", "It uses करो- (karo-) in the singular and कुरु-/कुर्व- (kuru-/kurv-) in the dual and plural."], ["Provide the मध्यमपुरुषः एकवचनम् form of √कृ (kṛ).", "करोषि (karoṣi)."], ["What is the प्रथमपुरुषः एकवचनम् form of √श्रु (śru - to hear)?", "शृणोति (śṛṇoti)."], ["What does the term अव्ययानि (Avyayāni) mean literally?", "\"That which does not undergo change\" (न व्येति इति अव्ययम्)."], ["Term: अपि (api)", "Meaning: Also / Even."], ["Term: कदा (kadā)", "Meaning: When?"], ["In Sanskrit, what is the specific word order rule for the indeclinable च (ca - and)?", "It is postpositive, following the last word of the joined group (e.g., रामः लक्ष्मणः च)."], ["Term: अद्य (adya)", "Meaning: Today."], ["Which case(s) does the indeclinable विना (vinā - without) typically govern?", "The second (accusative) or third (instrumental) case."], ["Which specific case must be used with the indeclinable सह (saha - with)?", "तृतीया विभक्तिः (Instrumental case)."], ["Term: तत्र (tatra)", "Meaning: There."], ["Term: किम् (kim)", "Meaning: What?"], ["What is the grammatical function of the pair यदि – तर्हि (yadi – tarhi)?", "It expresses conditionality (If... then...)."], ["What is the function of the pair यथा – तथा (yathā – tathā)?", "It expresses comparison or analogy (As... so...)."], ["What are उपसर्गाः (Upasargas) in Sanskrit grammar?", "Prefixes added before verb roots to modify or change their meaning."], ["Traditionally, how many Upasargas are there in Sanskrit grammar?", "Twenty-two."], ["Which Upasarga reverses the direction of गच्छति (gacchati - goes) to mean \"comes\"?", "आङ् (āṅ)."], ["What is the meaning of the verb विक्रीणाति (vikrīṇāti) formed from the root √क्री?", "Sells."], ["Which Upasarga means \"around\" or \"fully\" and forms the verb परिहरति (pariharati)?", "परि (pari)."], ["The verb अनुकरोति (anukaroti) is formed using which Upasarga?", "अनु (anu), meaning \"after\" or \"following.\""], ["What is the meaning of the prefixed verb अधिगच्छति (adhigacchati)?", "Attains or understands."], ["Explain the sandhi change in उत् + भवति (ut + bhavati).", "The final त् voices to द् before the voiced भ्, resulting in उद्भवति (udbhavati)."], ["Which Upasarga is used to mean \"back\" or \"against\" in the verb प्रतिगच्छति (pratigacchati)?", "प्रति (prati)."], ["What semantic shift occurs when उप (upa) is added to हसति (hasati)?", "It changes from \"laughs\" to \"mocks\" (उपहसति)."], ["Which Upasarga indicates \"forward\" or \"intensification,\" as in प्रभवति (prabhavati)?", "प्र (pra)."], ["The verb निर्गच्छति (nirgacchati) is formed with which prefix?", "निर् (nir), meaning \"out\" or \"away.\""], ["Who is the author of the epic नैषधीयचरितम् (Naiṣadhīyacaritam)?", "Śrī Harṣa."], ["In which century did Śrī Harṣa likely live?", "The 12th century A.D."], ["What is the narrative source of the नैषधीयचरितम् (Naiṣadhīyacaritam)?", "The नलोपाख्यान (Nalopākhyāna) episode from the Mahābhārata."], ["What specific culinary metaphor is used to describe Śrī Harṣa's difficult poetic style?", "नारिकेलपाक (Nārikelapāka), or the \"coconut ripeness\" (hard outside, sweet inside)."], ["Why is the नैषधीयचरितम् (Naiṣadhīyacaritam) referred to as a शास्त्रकाव्य (Śāstrakāvya)?", "Because it incorporates various technical sciences (Śāstras) and scholarship into the poetry."], ["How many cantos of नैषधीयचरितम् (Naiṣadhīyacaritam) are available today?", "22 cantos."], ["Which philosophical work on Advaita Vedānta was written by Śrī Harṣa?", "खण्डनखण्डखाद्यम् (Khaṇḍanakhaṇḍakhādyam)."], ["What is the significance of the saying \"यथा राजा तथा प्रजाः\"?", "It is a comparison meaning \"As the king, so the people.\""], ["Correct this sentence: \"रामः सीता च लक्ष्मणः च गच्छन्ति।\"", "रामः सीता लक्ष्मणः च गच्छन्ति। (The indeclinable च should follow the final item)."], ["Identify the root, person, and number of the verb \"कुर्वन्ति\".", "Root: √कृ; Person: प्रथमपुरुषः; Number: बहुवचनम्."], ["Identify the root and prefix in the verb \"आनयति\".", "Root: √नी; Prefix: आङ्."], ["True or False: Avyayāni change their endings based on the gender of the subject.", "False."], ["What does the prefix वि (vi) denote in the context of the verb विक्रीणाति?", "Separation or dispersal (turning 'buying' into 'selling')."], ["The verb \"अधिशेते\" is formed with which prefix?", "अधि (adhi)."], ["Which Sanskrit term describes the \"weight of meaning\" found in Bhāravi's work?", "अर्थगौरवम् (Arthagauravam)."], ["Identify the 3rd person dual form of √अस्.", "स्तः (staḥ)."], ["Identify the 1st person plural form of √कृ.", "कुर्मः (kurmaḥ)."]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
