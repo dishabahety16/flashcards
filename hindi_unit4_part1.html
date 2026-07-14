@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi Unit 4 Part 1 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>Hindi &mdash; Unit 4 (Part 1)</h1>
+<p class="subtitle">60 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["यशपाल (Yashpal) का जन्म और निधन किस वर्ष हुआ था?", "उनका जन्म 1903 में और निधन 1976 में हुआ था।"], ["यशपाल हिंदी साहित्य की किस लेखन परंपरा के अनुयायी माने जाते हैं?", "वे प्रेमचंद की यथार्थवादी (Realist) परंपरा के अनुयायी थे।"], ["महाराजा का इलाज' कहानी किस साहित्यिक विधा के अंतर्गत आती है?", "यह एक व्यंग्यात्मक कहानी (Satirical Short Story) है।"], ["यशपाल की कहानियों के केंद्र में मुख्य रूप से कौन से सामाजिक मुद्दे होते थे?", "सामंती व्यवस्था, वर्ग-भेद और अहंकार।"], ["महाराजा किस रियासत के शासक थे?", "मोहाना रियासत के महाराजा।"], ["महाराजा की बीमारी कितने वर्षों से चली आ रही थी?", "नौ वर्षों से।"], ["महाराजा की बीमारी के मुख्य शारीरिक लक्षण क्या थे?", "जुड़े हुए घुटने (Frozen knees) और हृदय तथा सिर की पीड़ा।"], ["महाराजा की बीमारी की चर्चा कहाँ तक प्रसिद्ध थी?", "लखनऊ के गवर्नमेंट हाउस (Government House) तक।"], ["महाराजा के ड्राइंग-रूम में किसका सहानुभूति पत्र काँच के फ्रेम में लगा था?", "गवर्नर का (Governor's sympathy letter)।"], ["महाराजा के पास किन दो महान नेताओं के पत्र या हस्ताक्षर सुरक्षित थे?", "महात्मा गांधी और मदन मोहन मालवीय।"], ["महाराजा हर साल गर्मियों में किस स्थान पर प्रवास करते थे?", "मसूरी (Mussoorie)।"], ["सितंबर के महीने में मसूरी में डॉक्टरों के एकत्रित होने को लेखक ने क्या कहा है?", "डॉक्टरों का मेला।"], ["डॉक्टरों की सभा के बाद महाराजा की बीमारी पर क्या प्रकाशित किया जाता था?", "एक मेडिकल बुलेटिन (Medical Bulletin)।"], ["डॉ. संघटिया को मसूरी आने का सुझाव किसने दिया था?", "बॉम्बे मेडिकल कॉलेज के प्रिंसिपल डॉ. कुराल ने।"], ["डॉ. संघटिया ने किस अंतरराष्ट्रीय शहर में चिकित्सा कार्य किया था?", "वियना (Vienna)।"], ["डॉ. संघटिया किस विशेष चिकित्सा प्रणाली के विशेषज्ञ थे?", "मनोकायिक (Psychosomatic) प्रणाली।"], ["Term: मनोकायिक (Psychosomatic) चिकित्सा", "Definition: वह पद्धति जो मानती है कि शारीरिक लक्षणों का मूल कारण मानसिक स्थिति या तनाव होता है।"], ["डॉक्टरों की सभा में डॉक्टर व्हिस्की और जिन की चुस्कियाँ लेते हुए क्या कर रहे थे?", "वे महाराजा की बीमारी पर अपना मंतव्य (राय) लिख रहे थे।"], ["महाराजा को हॉल में किस पर बैठाकर लाया गया था?", "एक पहिए वाली आराम कुर्सी (Wheeled armchair) पर।"], ["महाराजा के चेहरे पर अपनी बीमारी को लेकर कैसा भाव छाया रहता था?", "असाधारण और दुर्लभ रोग होने का गर्व।"], ["डॉ. संघटिया के अनुसार महाराजा का रोग किस प्रकार के उपचार से ठीक नहीं हो सकता था?", "साधारण शारीरिक उपचार (Physical treatment) द्वारा।"], ["डॉ. संघटिया ने महाराजा के रोग की तुलना किस व्यक्ति के रोग से की?", "बॉम्बे मेडिकल कॉलेज के एक मेहतर (Sweeper) से।"], ["मेहतर से तुलना सुनकर महाराजा की क्या प्रतिक्रिया थी?", "वे अत्यधिक क्रोधित हुए और 'चुप बदतमीज' चिल्लाकर खड़े हो गए।"], ["महाराजा का 'इलाज' दवा के बजाय किस तत्व से हुआ?", "तीव्र क्रोध (Anger) और आहत अहंकार से।"], ["कहानी का अंतिम वाक्य, 'खैर, जो हो, बीमारी का इलाज तो हो गया!', किस प्रकार का व्यंग्य है?", "वाचिक विडंबना (Verbal Irony)।"], ["कहानी में 'पहिए वाली कुर्सी' किसका प्रतीकात्मक अर्थ प्रकट करती है?", "महाराजा की मानसिक जड़ता और लाचारी का।"], ["यशपाल के अनुसार महाराजा की बीमारी का वास्तविक कारण क्या था?", "उनका अहंकार और वर्ग-श्रेष्ठता की भावना।"], ["यशपाल ने इस कहानी में किस प्रकार के नैरेटर (Narrator) का प्रयोग किया है?", "डिटैच्ड नैरेटर (Detached Narrator), जो सीधे टिप्पणी नहीं करता।"], ["महाराजा का अपनी बीमारी को 'राज-रोग' मानना किस मानसिकता को दर्शाता है?", "सामंती अहंकार और स्वयं को साधारण लोगों से ऊपर समझने की वृत्ति।"], ["Cloze: महाराजा की तुलना _____ से करना उनके वर्ग-अहंकार पर सबसे बड़ा प्रहार था।", "मेहतर"], ["डॉक्टरों द्वारा व्हिस्की पीते हुए इलाज की राय देना किस पर व्यंग्य है?", "चिकित्सा पेशे के ढोंग और संवेदनहीनता पर।"], ["कहानी में गवर्नर का पत्र किस बात का प्रतीक है?", "खोखली प्रतिष्ठा और सत्ता के प्रति चाटुकारिता का।"], ["यशपाल की विचारधारा किस राजनीतिक दर्शन से गहराई से प्रभावित थी?", "मार्क्सवादी विचारधारा (Marxist ideology)।"], ["कहानी के अनुसार 'अहंकार' को किस रूप में देखना चाहिए?", "एक मानसिक और सामाजिक रोग के रूप में।"], ["महाराजा ने हॉल से बाहर जाते समय किसका सहारा नहीं लिया?", "सेवकों या अपनी आराम कुर्सी का।"], ["डॉ. संघटिया कहानी में किस गुण का प्रतिनिधित्व करते हैं?", "वैज्ञानिक दृष्टिकोण, साहस और सत्यवादिता।"], ["कहानी का मुख्य संदेश क्या है?", "सच्चा स्वास्थ्य अहंकार के त्याग और सामाजिक समानता में निहित है।"], ["Cloze: महाराजा के रोग का निदान दवा से नहीं बल्कि _____ के टूटने से हुआ।", "अहंकार"], ["यशपाल की भाषा-शैली की प्रमुख विशेषता क्या है?", "सरल, व्यावहारिक हिंदी और यथार्थवादी चित्रण।"], ["एक डॉक्टर ने महाराजा को कहाँ जाकर 'कालोंतविवादी' चश्मे में स्नान करने की सलाह दी?", "चेकोस्लोवाकिया (Czechoslovakia) में।"], ["महाराजा को न्यूयॉर्क जाकर कौन सी चिकित्सा करवाने की सलाह दी गई थी?", "विद्युत चिकित्सा (Electric treatment)।"], ["कहानी में 'स्थितिजन्य विडंबना' (Situational Irony) का सबसे बड़ा उदाहरण क्या है?", "महाराजा का इलाज दवा से नहीं, बल्कि क्रोध और अपमान की भावना से होना।"], ["यशपाल के अनुसार बीमारी क्या नहीं देखती?", "बीमारी जाति, वर्ग या सामाजिक स्थिति नहीं देखती।"], ["महाराजा के क्रोधित होने पर उनकी शारीरिक स्थिति कैसी थी?", "उनके घुटने काँप रहे थे, होंठ फड़फड़ा रहे थे और आँखें सुर्ख थीं।"], ["कहानी का शीर्षक 'महाराजा का इलाज' किस अर्थ में विडंबनापूर्ण है?", "क्योंकि 'इलाज' डॉक्टर की दवा के बजाय महाराजा की अपनी मानसिक प्रतिक्रिया से हुआ।"], ["यशपाल की यह कहानी स्वतंत्रता से पूर्व के किस परिवेश पर आधारित है?", "रजवाड़ा-संस्कृति और सामंती व्यवस्था (Princely states) पर।"], ["सोवियत भ्रमण से आए डॉक्टर ने कहाँ के जल से इलाज का सुझाव दिया?", "काला सागर (Black Sea) के किनारे 'सोची' के जल से।"], ["महाराजा को घुटनों की समस्या के अलावा और कहाँ दर्द रहता था?", "हृदय और सिर में।"], ["क्या महाराजा की बीमारी शारीरिक रूप से अस्तित्व में थी?", "नहीं, वह पूरी तरह मनोकायिक (मानसिक) थी।"], ["कहानी के अंत में डॉक्टरों की मुस्कान क्या दर्शाती है?", "वे समझ गए थे कि डॉक्टर संघटिया का प्रयोग सफल रहा और बीमारी का ढोंग उजागर हो गया।"], ["यशपाल ने अहंकार को व्यक्तिगत समस्या के बजाय और क्या माना है?", "एक सामाजिक विकृति या 'सामाजिक रोग'।"], ["Cloze: 'महाराजा का इलाज' कहानी _____ और _____ के बीच के गहरे संबंध को उजागर करती है।", "मन; शरीर"], ["कहानी की एक प्रमुख सीमा (Limitation) क्या बताई गई है?", "इसमें स्त्री-पात्रों और ग्रामीण दृष्टिकोण का पूर्ण अभाव है।"], ["डॉ. संघटिया का चरित्र किस आधुनिक विचारधारा का समर्थन करता है?", "वैज्ञानिक मनोचिकित्सा और सामाजिक समानता।"], ["महाराजा की बीमारी 'दुर्बोध' (Incomprehensible) क्यों मानी जाती थी?", "क्योंकि शारीरिक जाँच में डॉक्टरों को कोई वास्तविक दोष नहीं मिलता था।"], ["यशपाल की कहानियों में 'सच्चाई' दिखाने की तकनीक को क्या कहा जाता है?", "Show don't tell' (घटनाओं के माध्यम से संदेश देना)।"], ["महाराजा का क्रोध उनकी किस भावना पर चोट करने के कारण उपजा?", "उनकी वर्ग-श्रेष्ठता और सामंती अहंकार पर।"], ["आज के समय में यह कहानी किस प्रकार प्रासंगिक है?", "यह आधुनिक 'VIP' संस्कृति और विशिष्टता के मोह पर प्रहार करती है।"], ["Cloze: महाराजा का 'राज-रोग' वास्तव में उनकी _____ का ही एक रूप था।", "मानसिक विकृति / अहंकार"], ["यशपाल के लेखन का मुख्य उद्देश्य क्या था?", "समाज में व्याप्त विषमता और पाखंड को उजागर करना।"]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
