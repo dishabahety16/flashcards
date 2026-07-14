@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCA Python Unit 4 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>BCA Python &mdash; Unit 4</h1>
+<p class="subtitle">71 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["In the Von Neumann architecture, which component is responsible for managing the fetch-decode-execution process?", "The Control Unit (CU)."], ["Which part of the CPU performs arithmetic and logical calculations like addition, division, and comparisons?", "The Arithmetic Logic Unit (ALU)."], ["What is the primary difference between Primary Memory (RAM) and Secondary Memory regarding power loss?", "Primary Memory is volatile and loses data when power is off, whereas Secondary Memory is non-volatile."], ["According to the memory hierarchy, which storage level is the most quickly accessible by the CPU?", "Registers."], ["In a digital computer, what is the function of the 'Bus'?", "It is responsible for the movement of data between components like input and output devices."], ["A program called a(n) _____ is used to translate symbolic code (Assembly language) into machine language.", "assembler"], ["How does a compiler differ from an interpreter in handling program errors?", "An interpreter stops and reports the first error it encounters, while a compiler reads the entire program before reporting errors."], ["Which unit of computer memory is equivalent to 1,024 Megabytes?", "1 Gigabyte (GB)."], ["The first commercially produced and sold computer in 1951 was the _____.", "UNIVAC"], ["In problem analysis, what is a 'decomposable' problem?", "A problem that can be broken down into smaller, manageable sub-problems."], ["What problem-solving tool uses a hierarchy to show the functional flow and logical breakdown of a program?", "A structure chart."], ["A(n) _____ is a set of finite, ordered steps used to solve a problem in a step-by-step manner.", "algorithm"], ["In a flowchart, what specific shape is used to represent a decision (True/False or Yes/No)?", "A diamond (or rhombus)."], ["In a flowchart, what does a parallelogram symbol represent?", "Input or Output operations."], ["What is the purpose of a 'terminal' symbol (rounded rectangle) in a flowchart?", "To indicate the starting and terminating points of the process."], ["Python was conceived in the late 1980s by _____ (based on the About the Author context) and began usage in 1989.", "Guido van Rossum (though the text emphasizes E. Balagurusamy as the book author)."], ["Which character is used in Python to indicate that the remaining text on a line is a comment?", "The hash character ($#$)."], ["What defines a valid Python identifier?", "It must start with an alphabet or underscore and can include letters, digits, and underscores (no spaces)."], ["In Python, the process of assigning a value to a variable for the first time is called _____.", "initialization"], ["What is the result of the expression $5 // 2$ in Python?", "$2$ (floor division removes the fractional part)."], ["Which Python operator is used to calculate the exponential (power) of a number?", "The double asterisk operator ($**$)."], ["In Python string slicing, what is the result of 'Hello'[0:2]?", "He'."], ["Which data type in Python is an ordered, indexable sequence that is enclosed in square brackets $[]$?", "A list."], ["What is the fundamental difference between a list and a tuple in Python?", "Lists are mutable (can be changed), while tuples are immutable (read-only)."], ["Which Python data type consists of an unordered collection of key-value pairs enclosed in curly braces ${}$?", "A dictionary."], ["In a Python dictionary, what type of objects must the 'keys' be?", "Keys must be unique and immutable (e.g., strings, integers, or tuples)."], ["What Python function returns the data type of an object?", "The $type()$ function."], ["Which set operation, performed with the $\\&$ operator, returns elements common to both sets?", "Intersection."], ["What is the result of the bitwise AND operation between $10$ ($1010$) and $12$ ($1100$)?", "$8$ ($1000$)."], ["Which Python operator checks if an item is part of a sequence like a string, list, or tuple?", "The membership operator '$in$'."], ["What is the primary function of the 'is' identity operator?", "To check if both operands refer to the same object in memory."], ["In Python's operator precedence, which operator has higher importance: Multiplication ($*$) or Addition ($+$)?", "Multiplication ($*$)."], ["What is the 'associativity' of the exponentiation operator ($**$) in Python?", "Right-to-left."], ["Which string method converts all upper-case letters in a string to lower-case?", "The $.lower()$ method."], ["What is the output of $range(3, 9)$ when converted to a list?", "$[3, 4, 5, 6, 7, 8]$."], ["The 'else' block in a Python 'for' loop executes only under what condition?", "It executes when the loop exits normally (not stopped by a 'break' statement)."], ["Mutable vs Immutable: Why is a printed book considered 'immutable' in the text's analogy?", "Because once it is printed, the text cannot be changed; any change requires a new object."], ["Which list method adds a single element to the very end of the list?", "The $append(x)$ method."], ["How does the list method $extend()$ differ from $append()$?", "$append()$ adds one item to the end, while $extend()$ adds all items from an iterable to the end."], ["Which list method removes and returns the element at a specific index?", "The $pop(i)$ method."], ["What is the syntax for a list comprehension that squares each number from $1$ to $5$?", "$[x**2 for x in range(1, 6)]$"], ["When a list is passed as an argument to a function, what happens to the original list if the function modifies it?", "The original list is modified because Python passes a reference to the same object."], ["What mandatory punctuation is required to define a single-element tuple in Python?", "A trailing comma, e.g., $(42,)$."], ["Concept: Tuple Unpacking", "Definition: Assigning the elements of a tuple to multiple variables in a single line (e.g., $x, y = (10, 20)$)."], ["What dictionary method allows for 'safe access' by returning 'None' instead of a KeyError if a key is missing?", "The $.get()$ method."], ["Which dictionary method merges another dictionary into the current one, overwriting existing keys?", "The $.update()$ method."], ["What is the difference between $math.ceil(x)$ and $math.floor(x)$?", "$math.ceil(x)$ rounds up to the nearest integer, while $math.floor(x)$ rounds down."], ["What is the purpose of the $math.gcd(a, b)$ function?", "To calculate the greatest common divisor of two numbers."], ["In NumPy, what does the 'ndarray' characteristic 'homogeneous' mean?", "All elements in the array must be of the same data type."], ["Which NumPy attribute returns a tuple representing the dimensions of an array (e.g., rows and columns)?", "The $.shape$ attribute."], ["What is the requirement for the number of elements when using the NumPy $.reshape()$ method?", "The total number of elements must remain the same in the new shape."], ["In NumPy, what is the 'dot product' calculated by $np.dot(a, b)$ for two 1D vectors?", "The sum of the products of their corresponding elements."], ["Why are NumPy arrays faster than Python lists for numerical computations?", "They store data contiguously in memory and use vectorized operations (C-speed) rather than Python loops."], ["Which specific function in the math module returns the factorial of a number $n$?", "$math.factorial(n)$."], ["What is the index of the last element in a list of $n$ elements when using negative indexing?", "$-1$."], ["How do you create a deep copy of a dictionary to ensure nested mutable objects are also copied?", "Use $copy.deepcopy(d)$ from the 'copy' module."], ["In NumPy, what does $np.arange(0, 10, 2)$ produce?", "An array: $[0, 2, 4, 6, 8]$."], ["Which flowchart symbol is used to link steps on different pages to maintain process continuation?", "The connector (small circle)."], ["What is the Python reserved keyword used to delete an object or a dictionary key?", "$del$"], ["In the context of problem-solving, what is 'pseudo code'?", "An informal high-level description of an algorithm using English-like syntax."], ["Which character represents the bitwise XOR operator in Python?", "The caret ($^$)."], ["Which Python operator is used to check if two objects are NOT the same (identity)?", "$is\\ not$"], ["In the memory hierarchy, which memory type is used to store data recently processed by the CPU to speed up execution?", "Cache Memory."], ["What is the function of the 'Operating System' (OS) in a computer?", "It works as an interface between the hardware and the user and manages system resources."], ["What is the standard unit of computer memory consisting of 8 bits?", "A byte."], ["Which list method sorts a list 'in-place', meaning it modifies the original object?", "The $sort()$ method."], ["What is 'vectorization' in the context of NumPy?", "Applying operations to entire arrays at once without the need for explicit Python for-loops."], ["Which Python data type is an unordered collection that automatically removes duplicate elements?", "A Set."], ["What is the output of $bool(True)$ in Python?", "$True$"], ["Which dimension of problem analysis identifies whether executed steps can be backtracked (undone)?", "Recoverable vs. Irrecoverable."], ["What is the purpose of the 'Always Remember' section at the end of each chapter in the textbook?", "To provide important summary points for readers to easily recollect the topics covered."]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
