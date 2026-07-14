@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanskrit Unit 1 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>Sanskrit &mdash; Unit 1</h1>
+<p class="subtitle">88 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["What is the name of the script exclusively used for writing Sanskrit in this course?", "Devanāgarī (देवनागरी)"], ["The Sanskrit alphabet is known by the term _____.", "Varṇamālā (वर्णमाला)"], ["Sanskrit letters (वर्णाः) are divided into which two main classes?", "Vowels (स्वराः) and Consonants (व्यञ्जनानि)"], ["How many total vowels (स्वराः) are recognised in the Sanskrit tradition?", "15"], ["How many total consonants (व्यञ्जनानि) are there in Sanskrit?", "33"], ["Term: ह्रस्वस्वराः (Hrasva-svarāḥ)", "Definition: Short vowels held for exactly one mātrā (unit of time). Examples: अ, इ, उ, ऋ, ऌ."], ["Identify the five Sanskrit short vowels (ह्रस्वस्वराः).", "अ, इ, उ, ऋ, ऌ"], ["Term: दीर्घस्वराः (Dīrgha-svarāḥ)", "Definition: Long vowels held for two mātrās. Examples: आ, ई, ऊ, ॠ, ॡ, ए, ऐ, ओ, औ."], ["Which duration of time is associated with a Dīrgha (long) vowel?", "Two mātrās (units of time)"], ["Term: संयुक्तस्वराः (Saṁyukta-svarāḥ)", "Definition: Compound/Conjunct vowels formed by combining two vowel sounds. Examples: ए, ऐ, ओ, औ."], ["In Sanskrit phonology, compound vowels (संयुक्तस्वराः) are always _____ in duration.", "Dīrgha (long)"], ["Term: अनुस्वारः (Anusvāra)", "Definition: A nasal resonance represented as a dot (ं) placed above the preceding vowel."], ["Term: विसर्गः (Visarga)", "Definition: A voiceless breath release sound represented by two dots (ः) following a vowel."], ["Are Anusvāra (अं) and Visarga (अः) traditionally counted as vowels or consonants?", "Vowels (स्वराः)"], ["Consonants are divided into two primary categories: वर्गीयव्यञ्जनानि and _____.", "अवर्गीयव्यञ्जनानि (avargīya-vyañjanāni)"], ["What is the term for consonants organized into five groups of five letters each?", "Vargīya-vyañjanāni (वर्गीयव्यञ्जनानि)"], ["How many vargas (groups) of consonants exist in Sanskrit?", "Five"], ["Name the phonetic class and letters of the 'Ka-varga' (कवर्गः).", "Gutturals (kaṇṭhya) — क ख ग घ ङ"], ["Name the phonetic class and letters of the 'Ca-varga' (चवर्गः).", "Palatals (tālavya) — च छ ज झ ञ"], ["Name the phonetic class and letters of the 'Ṭa-varga' (टवर्गः).", "Cerebrals (mūrdhanya) — ट ठ ड ढ ण"], ["Name the phonetic class and letters of the 'Ta-varga' (तवर्गः).", "Dentals (dantya) — त थ द ध न"], ["Name the phonetic class and letters of the 'Pa-varga' (पवर्गः).", "Labials (oṣṭhya) — प फ ब भ म"], ["The mnemonic 'Kind Children Take Daily Pills' represents the order of vargas as: Guttural, Palatal, Cerebral, Dental, and _____.", "Labial"], ["Term: अन्तःस्थाः (Antaḥsthāḥ)", "Definition: Semi-vowels that stand between vowels and consonants. Letters: य र ल व."], ["Identify the four semi-vowels (अन्तःस्थाः) in Sanskrit.", "य, र, ल, व (ya, ra, la, va)"], ["Term: ऊष्माणः (Ūṣmāṇaḥ)", "Definition: Sibilants or fricatives produced with friction/breath. Letters: श ष स ह."], ["Identify the four sibilants (ऊष्माणः) in Sanskrit.", "श, ष, स, ह (śa, ṣa, sa, ha)"], ["Within a varga, what phonetic role is typically played by the fifth letter?", "The nasal of that group (e.g., ङ, ञ, ण, न, म)."], ["Sanskrit sibilants are categorized by articulation: श is palatal, ष is cerebral, स is dental, and ह is _____.", "Guttural"], ["Term: संयोजनम् (Saṁyojana)", "Definition: The process of joining individual letter components to form a complete Devanāgarī word."], ["Term: विच्छेदः (Viccheda)", "Definition: The process of splitting a Devanāgarī word back into its individual letter components."], ["What is the inherent vowel sound assumed in every Devanāgarī consonant?", "The short vowel 'a' (अ)"], ["Term: हलन्तः (Halanta)", "Definition: A stroke (्) placed below a consonant to indicate that it is pure and has no following vowel."], ["Perform saṁyojana for: स् + उ + ख् + अ + म्.", "सुखम् (sukham)"], ["Perform saṁyojana for: ज् + ई + व् + अ + ः.", "जीवः (jīvaḥ)"], ["Perform saṁyojana for: भ् + अ + ग् + अ + व् + आ + न्.", "भगवान् (bhagavān)"], ["Perform viccheda for the word: रामः.", "र् + आ + म् + अ + ः"], ["Perform viccheda for the word: मूलम्.", "म् + ऊ + ल् + अ + म्"], ["What does the word 'अजः' mean?", "Goat"], ["What does the word 'गजः' mean?", "Elephant"], ["What does the word 'खगः' mean?", "Bird"], ["What does the word 'जनकः' mean?", "Father"], ["What does the word 'औषधम्' mean?", "Medicine"], ["What is the Devanāgarī transcription of the word 'Maraṇam'?", "मरणम्"], ["What is the Devanāgarī transcription of the word 'Auṣadham'?", "औषधम्"], ["How many cases (विभक्तयः) are there in Sanskrit grammar?", "8"], ["How many numbers (वचनानि) exist in Sanskrit grammar?", "3 (Singular, Dual, Plural)"], ["Term: एकवचनम् (Ekavacana)", "Definition: The singular number, used to refer to one entity."], ["Term: द्विवचनम् (Dvivacana)", "Definition: The dual number, used to refer to exactly two entities."], ["Term: बहुवचनम् (Bahuvacana)", "Definition: The plural number, used to refer to three or more entities."], ["What is the name of the first case (1st Vibhakti) in English?", "Nominative"], ["What is the name of the second case (2nd Vibhakti) in English?", "Accusative"], ["What is the name of the third case (3rd Vibhakti) in English?", "Instrumental"], ["What is the name of the fourth case (4th Vibhakti) in English?", "Dative"], ["What is the name of the fifth case (5th Vibhakti) in English?", "Ablative"], ["What is the name of the sixth case (6th Vibhakti) in English?", "Genitive"], ["What is the name of the seventh case (7th Vibhakti) in English?", "Locative"], ["What is the name of the eighth case in English, used for addressing someone?", "Vocative (सम्बोधनम्)"], ["Term: अकारान्त (Akārānta)", "Definition: A word stem ending in the short vowel 'a' (अ)."], ["Which grammatical gender is 'पुँल्लिङ्गः'?", "Masculine"], ["In the Rāma paradigm, what is the Nominative Singular (प्रथमा एकवचनम्) form?", "रामः (rāmaḥ)"], ["In the Rāma paradigm, what is the Accusative Singular (द्वितीया एकवचनम्) form?", "रामम् (rāmam)"], ["In the Rāma paradigm, what is the Instrumental Singular (तृतीया एकवचनम्) form?", "रामेण (rāmeṇa)"], ["In the Rāma paradigm, what is the Dative Singular (चतुर्थी एकवचनम्) form?", "रामाय (rāmāya)"], ["In the Rāma paradigm, what is the Ablative Singular (पञ्चमी एकवचनम्) form?", "रामात् (rāmāt)"], ["In the Rāma paradigm, what is the Genitive Singular (षष्ठी एकवचनम्) form?", "रामस्य (rāmasya)"], ["In the Rāma paradigm, what is the Locative Singular (सप्तमी एकवचनम्) form?", "रामे (rāme)"], ["In the Rāma paradigm, what is the Vocative Singular (सम्बोधन एकवचनम्) form?", "हे राम (he rāma)"], ["Which three cases in the dual number (द्विवचनम्) share the same form '-ābhyām'?", "Instrumental (3rd), Dative (4th), and Ablative (5th)."], ["Which two cases in the plural number (बहुवचनम्) share the identical form ending in '-ebhyaḥ'?", "Dative (4th) and Ablative (5th)."], ["What is the Nominative Dual (प्रथमा द्विवचनम्) ending for masculine 'a' stems?", "-au (e.g., रामौ)"], ["What is the Genitive Plural (षष्ठी बहुवचनम्) form of 'Deva'?", "देवानाम् (devānām)"], ["What is the Locative Plural (सप्तमी बहुवचनम्) form of 'Bāla'?", "बालेषु (bāleṣu)"], ["The Instrumental singular of Rāma is रामेण, but for Deva it is देवेन; this difference is due to the presence of the letter _____ in Rāma.", "ra' (र)"], ["Which Vibhakti is used to mark the direct object of a sentence?", "Accusative (द्वितीया)"], ["Which Vibhakti is used to express possession (e.g., 'of Rāma')?", "Genitive (षष्ठी)"], ["Translate the phrase 'By two boys' into Sanskrit using the correct Vibhakti and Vacana.", "बालाभ्याम् (Instrumental Dual)"], ["Translate 'From the god' into Sanskrit using the correct form of 'Deva'.", "देवात् (Ablative Singular)"], ["How does the singular Vocative form differ from the singular Nominative in masculine 'a' stems?", "The Vocative is the bare stem (e.g., हे राम) without the visarga (ः)."], ["According to phonetic arrangement, where is the Guttural (कवर्गः) group produced?", "Throat (kaṇṭha)"], ["According to phonetic arrangement, where is the Labial (पवर्गः) group produced?", "Lips (oṣṭha)"], ["Identify the word: 'A small part/bit'.", "लवः (lavaḥ)"], ["Identify the word: 'Happiness'.", "सुखम् (sukham)"], ["Identify the word: 'Equal / Even'.", "समः (samaḥ)"], ["Identify the word: 'Fame / Glory'.", "यशः (yaśaḥ)"], ["Split the word 'शौरिः' into its components (viccheda).", "श् + औ + र् + इ + ः"], ["Split the word 'गोपालः' into its components (viccheda).", "ग् + ओ + प् + आ + ल् + अ + ः"], ["In the word 'भगवान्', what does the final halanta on 'n' (न्) signify grammatically?", "It marks a pure consonant at the word end (nominative singular of an n-stem)."]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
