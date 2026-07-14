@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCA Python Unit 2 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>BCA Python &mdash; Unit 2</h1>
+<p class="subtitle">60 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["Python classifies control flow statements into which three main families?", "Conditional (Selection), Loop (Iterative), and Jump statements."], ["According to the ICJ memory trick, what does the 'I' represent in control flow classification?", "If (Conditional) statements."], ["According to the ICJ memory trick, what does the 'C' represent in control flow classification?", "Cycles (Loop) statements."], ["According to the ICJ memory trick, what does the 'J' represent in control flow classification?", "Jump statements."], ["Which common programming control structure is NOT supported in Python, unlike in C or Java?", "The switch/case statement."], ["What is the primary function of conditional flow statements in a program?", "To decide which path a program takes by executing blocks only if certain conditions are met."], ["How does Python define the body of an $if$ statement without using braces?", "Python uses whitespace and indentation to separate the body from the rest of the code."], ["In Python's logic, which numerical value is interpreted as False?", "The number $0$ is interpreted as False."], ["How does Python evaluate non-zero numbers in a test expression?", "Python treats all non-zero numbers as True."], ["Aside from the number zero, what other specific Python object is treated as False in a condition?", "The object $None$ is treated as False."], ["What happens to the program flow if the test expression in a simple $if$ statement evaluates to False?", "The interpreter skips the indented block and resumes at the next unindented line."], ["How many branches of an $if...else$ statement can execute during a single run?", "Exactly one branch executes, as the $if$ and $else$ blocks are mutually exclusive."], ["When should a programmer use an $if...else$ statement instead of a simple $if$ statement?", "When there are exactly two possible outcomes and a mandatory fallback is required."], ["Concept: Nested $if$ Statement", "Definition: An $if$ statement written inside another $if$ block that is only evaluated if the outer condition is True."], ["In a nested $if$ structure, what is the visual indicator of how deeply a statement is nested?", "The depth of the indentation level."], ["What is the purpose of the $elif$ keyword in Python?", "It allows for multi-way branching by chaining multiple conditions in a ladder structure."], ["How does Python process an $if-elif-else$ ladder when it encounters a True condition?", "It executes that condition's body and skips all remaining $elif$ and $else$ blocks."], ["What is the syntax requirement for a shorthand $if$ statement?", "The statement must be placed on the same line as the condition."], ["How can multiple statements be included in a shorthand $if$ line?", "Multiple statements must be separated by semicolons."], ["Formula: Python Ternary Operator", "$value\\_if\\_true \\text{ if } condition \\text{ else } value\\_if\\_false$"], ["What is the primary functional difference between a $while$ loop and a $for$ loop?", "A $while$ loop is condition-controlled, whereas a $for$ loop is sequence-controlled or count-controlled."], ["What is the minimum number of times a $while$ loop body might execute?", "Zero times, if the condition is False from the very start."], ["Why is it critical to modify the condition variable inside a $while$ loop body?", "To ensure the condition eventually becomes False and prevents an infinite loop."], ["Under what condition does the optional $else$ block of a $while$ loop execute?", "It executes only when the loop condition becomes False naturally."], ["If a $while$ loop is terminated by a $break$ statement, what happens to the $else$ block?", "The $else$ block is skipped and does not execute."], ["Which Python loop is best suited for iterating over items in a list or characters in a string?", "The $for$ loop."], ["Concept: $range(start, stop, step)$", "A function that generates a sequence of numbers, starting at 'start' and stopping before 'stop'."], ["What is the result of the sequence generated by $range(1, 6)$?", "The numbers $1, 2, 3, 4, 5$."], ["In a $for$ loop, when does the $else$ block execute?", "After the loop finishes iterating through all items in the sequence."], ["Concept: Nested Control Flow", "The practice of placing one control structure (like a loop or $if$ block) inside another."], ["How do nested loops behave in terms of iteration completion?", "The inner loop completes all its iterations every time the outer loop advances by one step."], ["Which analytical technique is recommended for debugging nested loops?", "Adding print statements to trace the values of loop variables during each iteration."], ["What is the immediate effect of a $break$ statement when executed inside a loop?", "It terminates the innermost loop immediately and jumps to the first statement after the loop."], ["If a $break$ statement is triggered inside a nested loop, which loops are terminated?", "Only the innermost loop containing the $break$ is terminated."], ["What is the functional difference between $break$ and $continue$?", "$break$ exits the entire loop, while $continue$ only skips the current iteration and jumps to the next one."], ["The _____ statement is used as a null operation when syntax requires a statement but no action is needed.", "pass"], ["What error occurs if you leave an $if$ block or loop empty without using a $pass$ statement?", "A SyntaxError will occur."], ["What is the primary purpose of the $exit()$ function?", "To terminate the entire program execution immediately."], ["In the function call $exit(1)$, what does the argument $1$ typically signify to the operating system?", "It signifies that the program terminated due to an error."], ["Compare the scope of $break$ versus the scope of $exit()$.", "$break$ only affects the innermost loop, while $exit()$ affects the entire script or program."], ["Which jump statement serves only as a structural placeholder with no effect on program flow?", "The $pass$ statement."], ["Where can the $pass$ statement be used in Python code?", "Inside loops, $if$ blocks, functions, or classes."], ["When should a programmer use a $while$ loop instead of a $for$ loop?", "When the exact number of iterations is unknown in advance and depends on a dynamic condition."], ["How is the iteration variable handled differently in a $for$ loop compared to a $while$ loop?", "In a $for$ loop, it is updated automatically by the sequence; in a $while$ loop, it must be manually updated."], ["Which selection structure is best for choosing between multiple exclusive options?", "The $if-elif-else$ ladder."], ["In the context of program flow, what is the 'fire alarm' analogy used to describe?", "The $break$ statement, as it causes an immediate evacuation of the loop."], ["In the context of program flow, what is the 'quality inspector' analogy used to describe?", "The $continue$ statement, as it skips one item but keeps the process moving."], ["What happens if all conditions in an $if-elif$ ladder are False and no $else$ block is provided?", "None of the blocks in the ladder will execute."], ["True or False: A $for$ loop in Python can iterate over the characters of a string.", "True."], ["What value does the $exit()$ function return to indicate a successful execution?", "The status code $0$."], ["Which jump statement allows a program to return control to the next iteration of a loop?", "The $continue$ statement."], ["In a shorthand $if-else$ statement, which value is placed at the very beginning of the line?", "The value to be returned if the condition is True."], ["Why is the $for$ loop considered 'finite' compared to the $while$ loop?", "Because it iterates over a pre-defined sequence, making the risk of an infinite loop very low."], ["In a nested loop structure, how many times does the inner loop run if the outer loop has 3 iterations and the inner loop has 3 iterations?", "It runs a total of $9$ times ($3 \\times 3$)."], ["What is the outcome of a $continue$ statement inside a $while$ loop regarding the test expression?", "The program immediately jumps back to evaluate the test expression again for the next iteration."], ["Which control flow statement is described as the 'traffic signals' of code?", "Control flow statements in general."], ["What is the 'text message' analogy referring to in Python syntax?", "Shorthand $if$ statements, which provide a shorter way to write single-statement blocks."], ["In the provided logic, what does 'IF = Inspect First' mean?", "It serves as a memory trick to remember that the condition is inspected before any action is taken."], ["What happens if a $pass$ statement is executed?", "Absolutely nothing occurs; the program simply moves to the next statement."], ["Which jump statement returns control to the operating system rather than the next line of code?", "The $exit()$ function."]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
