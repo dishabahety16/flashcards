@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCs Python Unit 4 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>B.Cs Python &mdash; Unit 4</h1>
+<p class="subtitle">75 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["Which programming paradigm focuses on a sequence of statements that modify the state of a conceptual machine?", "Procedural Programming."], ["The paradigm that organizes software as a mini-world of interacting entities is known as _____ Programming.", "Object-Oriented"], ["Concept: Programming Paradigm", "Definition: An organizational principle or style for building the structure and elements of computer programs."], ["What is the primary choice of logic in the Functional Programming model?", "Functions that take inputs and produce outputs without side effects."], ["In Object-Oriented Programming, what two components define every object?", "State (values) and behavior (methods)."], ["The term 'Imperative Programming' is often used as a synonym for which model?", "Procedural Programming."], ["A _____ is a blueprint or template used for creating specific objects.", "Class"], ["In the cookie cutter analogy, if the class is the cookie cutter, what is the 'cookie'?", "The object (or instance)."], ["The process of creating a concrete object from a class blueprint is called _____.", "Instantiation"], ["Which keyword is used in Python to begin a class definition?", "The `class` keyword."], ["In Python, every data type, such as `int` or `str`, is technically a _____.", "Class"], ["What information does the `id()` function provide about an object?", "Its unique memory address."], ["If two variables refer to the same memory object, the `is` operator returns _____.", "True"], ["What is the naming convention for Python classes?", "PascalCase (starting with an uppercase letter)."], ["Which parameter must always be the first argument in an instance method?", "The `self` parameter."], ["What does the `self` variable represent inside an instance method?", "The memory address of the specific object that called the method."], ["The special method _____ is automatically invoked to initialize an object's state upon creation.", "`__init__`"], ["In Python, the `__del__` method acts as a(n) _____, performing cleanup when an object is destroyed.", "Destructor"], ["Which method is technically the actual constructor that allocates memory before initialization?", "The `__new__` method."], ["By default, all attributes and methods in a Python class are _____.", "Public"], ["How does a programmer declare an attribute as 'private' in Python?", "By prefixing the identifier with two leading underscores (e.g., `__attr`)."], ["The internal renaming of private members to include the class name is called _____.", "Name Mangling"], ["By convention, an identifier starting with a single underscore (e.g., `_var`) indicates it is _____.", "Protected (internal to the class and its subclasses)."], ["Where are class variables defined within the class structure?", "Directly inside the class body, but outside of any methods."], ["How are class variables accessed throughout a program?", "Using the `ClassName.variable_name` syntax."], ["Which decorator is used to define a method that operates on the class itself rather than a specific instance?", "The `@classmethod` decorator."], ["What is the conventional name for the first parameter of a class method?", "`cls`"], ["Why can a class method not directly call an instance method?", "It lacks a `self` reference to a specific object instance."], ["Term: Operator Overloading", "Definition: Redefining the behavior of built-in operators for user-defined classes using dunder methods."], ["To overload the addition operator ($+$), a programmer must implement the _____ method.", "`__add__`"], ["Which dunder method is used to overload the equality comparison operator ($==$)?", "`__eq__`"], ["The dunder method `__sub__` is used to overload the _____ operator.", "Subtraction ($-$)"], ["In Python, the statement 'everything is an object' includes which unexpected entities?", "Functions, classes, modules, and basic types like integers."], ["Which built-in function returns a dictionary of an object's attributes and values?", "The `vars()` function."], ["The internal attribute _____ stores all dynamic attributes associated with an object instance.", "`__dict__`"], ["What does a docstring represent when placed as the first statement in a class?", "A description of the class's purpose, stored in the `__doc__` attribute."], ["An object that can return its elements one at a time is called a(n) _____.", "Iterable"], ["Which two methods must be implemented to create a user-defined iterator class?", "`__iter__` and `__next__`."], ["What exception must the `__next__` method raise to terminate an iteration?", "`StopIteration`."], ["A function that uses the `yield` statement instead of `return` is called a(n) _____.", "Generator"], ["What happens to a generator function's state when a value is yielded?", "The state is paused and saved, allowing the function to resume from the same point."], ["Concept: Inheritance", "Definition: A mechanism where a derived class acquires properties and behavior from a base class."], ["The relationship formed by inheritance is commonly described as a(n) _____ relationship.", "\"is-a\""], ["What is the primary difference between Single and Multiple inheritance?", "Single inheritance has one base class; Multiple inheritance has two or more base classes."], ["When a class is derived from another derived class, it is called _____ inheritance.", "Multilevel"], ["What is 'Hybrid Inheritance'?", "A combination of two or more types of inheritance in a single class hierarchy."], ["The _____ problem refers to ambiguity in multiple inheritance when classes share a common ancestor.", "Diamond"], ["Which class attribute displays the search order Python uses to resolve methods?", "`__mro__` (Method Resolution Order)."], ["How can a child class call a method from its parent class that it has overridden?", "By using the `super()` function."], ["Concept: Method Overriding", "Definition: A child class providing a specific implementation for a method already defined in its parent class."], ["What relationship is established by 'Containership' (Composition)?", "A \"has-a\" relationship."], ["Which built-in function returns `True` if an object is an instance of a specified class or its subclass?", "`isinstance()`"], ["The built-in function `issubclass(A, B)` checks if class _____ is derived from class _____.", "A; B"], ["Which ready-made base class is the ultimate ancestor of all classes in Python?", "The `object` class."], ["Term: Abstract Class", "Definition: A class that cannot be instantiated and serves as a blueprint for other classes."], ["Which module must be imported to define abstract classes in Python?", "The `abc` (Abstract Base Classes) module."], ["A method that is declared but contains no implementation is marked with the _____ decorator.", "`@abstractmethod`"], ["What happens at runtime if a subclass fails to implement an inherited abstract method?", "The subclass itself becomes abstract and cannot be instantiated."], ["Concept: Runtime Polymorphism", "Definition: Deciding at execution time which method implementation to call based on the object's actual type."], ["In Python, runtime polymorphism is naturally facilitated by which language feature?", "Dynamic typing (and method overriding)."], ["What is 'Duck Typing'?", "A concept where an object's suitability is determined by the presence of certain methods rather than its inheritance."], ["The dunder method `__str__` is used to customize the behavior of which built-in function?", "The `print()` or `str()` functions."], ["Which operator is overloaded by the dunder method `__truediv__`?", "Floating-point division ($/$)."], ["How does Python handle an assignment to a new attribute name that does not exist in the class definition?", "It dynamically creates the attribute for that specific object instance."], ["The practice of hiding internal data and requiring access through methods is called _____.", "Encapsulation"], ["In a multiple inheritance scenario `class D(B1, B2):`, which parent's constructor is searched first?", "The leftmost parent, `B1`."], ["Which keyword is used to skip the implementation of a class or method temporarily?", "The `pass` keyword."], ["What does a generator expression return instead of a full list?", "A generator object that yields items lazily (on demand)."], ["Code: `[x for x in data]` is a List Comprehension; what is `(x for x in data)`?", "A Generator Expression."], ["To overload the floor division operator ($//$), which dunder method is used?", "`__floordiv__`"], ["Which dunder method allows an object to be called like a function (e.g., `obj()`)?", "`__call__`"], ["In the MRO, which class is always searched last?", "The `object` class."], ["When using `super().__init__()`, why is the `self` argument omitted?", "Python automatically passes the current instance as `self` when using `super()`."], ["Which dunder method returns the length of an object when `len()` is called?", "`__len__`"], ["The principle that software entities should be open for extension but closed for modification is the _____ principle.", "Open-Closed"]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
