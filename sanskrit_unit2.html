@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanskrit Unit 2 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>Sanskrit &mdash; Unit 2</h1>
+<p class="subtitle">65 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["Term: आदिकाव्यम् (Ādi-kāvyam)", "Definition: The first ornate poem in Sanskrit literature, specifically referring to the Rāmāyaṇa."], ["Who is traditionally honored as the आदिकवि (Ādi-kavi), or the first poet of Sanskrit literature?", "The sage Vālmīki."], ["Approximately how many verses (श्लोकs) constitute the Rāmāyaṇa?", "Approximately 24,000 verses."], ["The Rāmāyaṇa is divided into how many major books, known as Kāṇḍas?", "Seven Kāṇḍas."], ["Which specific Kāṇḍa of the Rāmāyaṇa describes the childhood of Rāma?", "Bāla-kāṇḍa."], ["List the seven Kāṇḍas of the Rāmāyaṇa in their traditional sequence.", "Bāla, Ayodhyā, Araṇya, Kiṣkindhā, Sundara, Yuddha, and Uttara."], ["What is the primary metre (छन्दस्) used in the composition of the Rāmāyaṇa?", "Anuṣṭubh (also known as the śloka metre)."], ["Which aesthetic sentiment (रस) is considered the primary Rasa of the Rāmāyaṇa?", "Karuṇa Rasa (the sentiment of pathos or compassion)."], ["What event at the Tamasā riverbank inspired Vālmīki to utter the first śloka?", "A hunter killing a male krauñca (curlew) bird while it was with its mate."], ["Complete the start of the first spontaneous śloka in Sanskrit: 'मा _____ प्रतिष्ठां त्वमगमः...'", "निषाद (Niṣāda)."], ["Which deity appeared to Vālmīki and directed him to compose the entire story of Rāma?", "Brahmā."], ["According to tradition, the 24,000 verses of the Rāmāyaṇa are structurally linked to the 24 letters of which sacred mantra?", "The Gāyatrī Mantra."], ["Name the two sons of Rāma who first sang the Rāmāyaṇa in the presence of their father.", "Lava and Kuśa."], ["What geographical evidence is used to argue that the Rāmāyaṇa predates the Mahābhārata?", "The Rāmāyaṇa depicts South India as a forest wilderness, whereas the Mahābhārata describes established kingdoms there."], ["How many Mahākāvyas (great epics) were written by Kālidāsa?", "Two: Raghuvaṁśam and Kumārasambhavam."], ["Which work of Kālidāsa is a lyric poem (खण्डकाव्य) describing a message sent via a cloud?", "Meghadūtam."], ["Name Kālidāsa's three famous dramas.", "Mālavikāgnimitram, Vikramorvaśīyam, and Abhijñāna Śākuntalam."], ["Which drama is generally considered to be Kālidāsa's last and most mature work?", "Abhijñāna Śākuntalam."], ["How many cantos (sargas) are contained in Kālidāsa's Raghuvaṁśam?", "19 cantos."], ["What is the dominant aesthetic sentiment (रस) in the Raghuvaṁśam?", "Dharmavīra (heroism rooted in duty/righteousness)."], ["According to tradition, why did Kālidāsa stop writing Kumārasambhavam after the 8th canto?", "Pārvatī allegedly cursed him for his explicit description of the divine couple's love sports."], ["In Verse 1 of Raghuvaṁśam, the union of Pārvatī and Parameśvara is compared to the union of what two linguistic elements?", "Word (Vāk) and Meaning (Artha)."], ["Identify the figure of speech in Verse 1 where 'Pārvatī-Parameśvarau' can mean both Śiva-Pārvatī and Viṣṇu-Śiva.", "Śleṣa (double entendre)."], ["In Raghuvaṁśam Verse 2, what does the 'uḍupa' (small float/boat) represent in the simile?", "The poet's limited intellect (mati)."], ["In the ocean-crossing simile of Verse 2, what represents the 'dustaraṃ sāgaram' (difficult-to-cross ocean)?", "The vast Solar dynasty (Sūrya-prabhavo vaṁśaḥ)."], ["To what does Kālidāsa compare himself in Verse 3 when reaching for poetic fame (kavi-yaśaḥ)?", "A dwarf (vāmana) reaching for high-hanging fruit."], ["In Verse 4, the poet's entry into the dynasty's story is compared to a thread passing through a _____.", "Gem already drilled by a diamond (maṇau vajra-samutkīrṇe)."], ["According to Verse 5, the dominion of the Raghu kings extended all the way to which natural boundary?", "The oceans (ā-samudra-kṣitīśānām)."], ["In Verse 5, what does 'āna-ka-ratha-vartmanām' signify about the Raghu kings' power?", "Their chariot tracks reached the heavens."], ["The phrase 'yathā-aparādha-daṇंडānām' in Verse 6 describes what quality of the Raghu kings?", "They punished crimes appropriately (according to the offense)."], ["What does the term 'yathā-kāla-prabodhanām' in Verse 6 imply about the kings' daily discipline?", "They awakened at the right time (specifically during Brahma-muhūrta)."], ["According to Verse 7, for what purpose did the Raghu kings accumulate wealth (sambhṛtārthānām)?", "For charity/giving (tyāgāya)."], ["Why were the Raghu kings 'mita-bhāṣiṇām' (men of few words) according to Verse 7?", "For the sake of truth (satyāya)."], ["Based on Verse 7, what was the primary motivation for the Raghu kings to engage in conquest (vijigīṣūṇām)?", "For the sake of fame (yaśase)."], ["In Verse 8, what did the Raghu kings do in their childhood (śaiśava)?", "Studied the various sciences/knowledges (abhyasta-vidyānām)."], ["In which stage of life (āśrama) did the Raghu kings seek the enjoyment of life's pleasures according to Verse 8?", "Youth (yauvana)."], ["How did the Raghu kings traditionally leave their bodies in their final stage of life?", "Through Yoga (yogena ante tanu-tyajām)."], ["In Verse 9, what does Kālidāsa say 'compels' him to speak about the dynasty despite his limited speech?", "The virtues of the Raghu kings (tad-guṇāḥ)."], ["In Verse 10, what element is used to test the purity of gold (hemnaḥ), serving as an analogy for critical judgment?", "Fire (agnau)."], ["According to Verse 11, who was the first and most honored among kings (mahī-kṣitām-ādyaḥ)?", "Vaivasvata Manu."], ["In Verse 11, Vaivasvata Manu's primacy among kings is compared to the primacy of which syllable among Vedic chants?", "Praṇava (the syllable Oṁ)."], ["Who is the 'King among Moons' (Rājenduḥ) introduced in Verse 12?", "King Dilīpa."], ["To what is the birth of King Dilīpa from his pure lineage compared in Verse 12?", "The moon rising from the ocean of milk (kṣīra-nidhāv-iva uditaḥ)."], ["How does Verse 12 characterize the purity of King Dilīpa relative to his lineage?", "He was 'śuddhataraḥ' (purer) even within a lineage that was already 'śuddhimataḥ' (pure)."], ["Verse 13 describes Dilīpa as having shoulders like what animal?", "A bull (vṛṣa-skandhaḥ)."], ["To which tall tree is Dilīpa's height compared in Verse 13?", "The Śāla tree (śāla-prāṁśuḥ)."], ["Complete the metaphor from Verse 13: 'kṣātro dharma ivāśritaḥ' suggests Dilīpa was like _____ embodied.", "Kṣatriya-dharma (the duty of the warrior class)."], ["To which cosmic mountain is Dilīpa compared in Verse 14?", "Mount Meru."], ["According to Verse 14, in what three ways did Dilīpa resemble Mount Meru?", "Height (unnatena), inner essence/strength (sāreṇa), and radiance (tejasā)."], ["Verse 15 uses which Sanskrit word repeatedly to indicate the 'matching' or 'symmetry' of Dilīpa's qualities?", "Sadṛśa (सदृश)."], ["According to the chain of symmetry in Verse 15, what matched Dilīpa's form (ākāra)?", "His intellect (prajñā)."], ["In Verse 15's progression, what matched Dilīpa's intellect (prajñā)?", "His knowledge/learning (āgama)."], ["In Verse 15's progression, what matched Dilīpa's knowledge (āgama)?", "His actions/undertakings (ārambha)."], ["In Verse 15's progression, what matched Dilīpa's actions (ārambha)?", "His success/achievement (udaya)."], ["The compound 'Pārvatī-Parameśvarau' in Verse 1 uses the dual form to invoke the 'Parents of the _____'.", "Universe (jagataḥ pitarau)."], ["Which Sanskrit scholar wrote the most famous and widely used commentary on Raghuvaṁśam?", "Mallinātha."], ["In the Maṇi-Sūtra simile of Verse 4, who represents the 'diamond' (vajra) that drilled the path?", "Earlier scholars or poets (pūrva-sūribhiḥ)."], ["Which specific ancestor of Rāma is described as the son of the Sun-god (Vivasvat) in Verse 11?", "Vaivasvata Manu."], ["What Sanskrit term describes the auspicious invocation found at the beginning of a Kāvya, such as Raghuvaṁśam Verse 1?", "Maṅgalācaraṇa."], ["In Raghuvaṁśam Canto I, which verse specifically mentions the kings becoming forest-dwellers (muni-vṛtti) in old age?", "Verse 8."], ["Kālidāsa states his goal in Verse 9 is to narrate the _____ of the Raghus.", "Lineage or genealogy (anvaya)."], ["What is the meaning of 'vi-śuddhiḥ' and 'śyāmikā' in the context of Verse 10's gold metaphor?", "Purity (viśuddhiḥ) and impurity/flaw (śyāmikā)."], ["The phrase 'vyāḍh-ora-sko' in Verse 13 refers to which physical feature of King Dilīpa?", "A broad chest."], ["Identify the stage of the 'Sādṛśya' (symmetry) chain: āgama $\\rightarrow$ _____ $\\rightarrow$ udaya.", "ārambha."], ["In Verse 1, the poet prays 'vāk-artha-pratipattaye', which means the proper understanding of _____.", "Words and their meanings."]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
