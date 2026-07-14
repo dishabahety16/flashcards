@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCA Python Unit 3 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>BCA Python &mdash; Unit 3</h1>
+<p class="subtitle">65 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["In Python, what is the term for breaking a large, complex programme into smaller, manageable parts that can be worked on independently?", "Functional decomposition."], ["How does the 'black box' concept apply to the way a caller interacts with a Python function?", "The caller focuses on the service the function provides rather than the internal details of how it achieves the task."], ["What is the primary benefit of functions regarding code duplication?", "Logic is defined once and can be called repeatedly instead of being rewritten multiple times."], ["Why are functions considered effective tools for debugging?", "They allow specific parts of a programme to be tested in isolation before being assembled."], ["Where are Python's pre-defined built-in functions, such as `print()` and `len()`, stored?", "In a special module called `__builtins__`."], ["What is the primary difference between built-in functions and user-defined functions?", "Built-in functions are pre-defined in the language, whereas user-defined functions are created by the programmer for specific tasks."], ["Which Python keyword signals the start of a function definition?", "`def`"], ["What are the naming requirements for a valid function identifier in Python?", "It must start with a letter or underscore and contain no spaces or keywords."], ["In a function definition, what punctuation must follow the parentheses in the header line?", "A colon (`:`)"], ["Term: Docstring", "Definition: A documentation string enclosed in triple quotes as the first line of a function body to describe its purpose."], ["How does the interpreter signal that a function definition is in progress when using interactive mode?", "It displays ellipses (`...`)."], ["During a function call, what happens to the programme's flow of execution?", "It pauses at the call site, 'detours' to execute the function body, and then 'unwinds' back to the call site."], ["What replaces a function call in an expression if the function provides a result?", "The function's return value."], ["Distinguish between 'formal parameters' and 'actual parameters'.", "Formal parameters are variables in the definition header; actual parameters (arguments) are the specific values passed during the call."], ["What occurs when an immutable type, such as an integer, is passed as an actual parameter to a function?", "The function works with a local reference and cannot change the caller's original variable."], ["In Python terminology, what is a 'fruitful function'?", "A function that provides a result back to the caller using a `return` statement."], ["What value is automatically returned by a 'void function' that lacks a `return` statement?", "`None`"], ["How can a Python function return multiple values to the caller simultaneously?", "By separating the values with commas, which the interpreter packs into a single tuple."], ["Why must a function be defined before its first use in a Python script?", "The interpreter executes code line-by-line, and calling an undefined function results in a `NameError`."], ["Which built-in function is used to pause execution and gather keyboard data as a string?", "`input()`"], ["What is the purpose of the built-in `id()` function?", "It returns the unique memory address of a specific object."], ["Which built-in function reveals all components, such as variables and functions, available within a module?", "`dir()`"], ["What are the three potential arguments that can be passed to the `range()` function?", "Begin, end (exclusive), and step."], ["In a function definition, what is the syntax for assigning a default value to a parameter?", "`def function_name(parameter=value):`"], ["According to Python's syntax rules, where must default parameters be placed in the parameter list?", "They must follow all non-default (positional) parameters."], ["What is the primary advantage of using keyword arguments during a function call?", "The caller can specify arguments by name, allowing them to be passed out of order."], ["In a function call mixing positional and keyword arguments, which type must appear first?", "Positional arguments."], ["How are positional arguments associated with formal parameters during invocation?", "They are assigned based on their order, from first to last."], ["What is the function of the `*args` prefix in a formal parameter list?", "It acts as a tuple to collect an arbitrary number of extra positional arguments."], ["What is the function of the `**kwargs` prefix in a formal parameter list?", "It acts as a dictionary to capture an arbitrary number of extra keyword arguments."], ["Term: Scope", "Definition: The specific area of a programme where a variable is recognised and can be accessed."], ["What is the scope of a variable defined inside a function block?", "Local scope (it is hidden from code outside that function)."], ["When are local variables created and destroyed in memory?", "They are created when the function begins execution and destroyed when the function returns."], ["What is the defining characteristic of a global variable?", "It is defined outside all functions and persists throughout the entire duration of the programme."], ["Why is the extensive use of global variables generally discouraged in software engineering?", "It creates functional dependence, making debugging difficult and behaviour unpredictable."], ["When is the `global` keyword mandatory inside a function?", "When the function needs to assign or modify the value of a global variable."], ["How does the lifetime of a global variable compare to that of a local variable?", "Global variables exist for the programme's entire execution, whereas local variables exist only during the function call."], ["What is the benefit of providing information via 'command line arguments' rather than the `input()` function?", "It allows for automation without requiring human interaction during execution."], ["In the `sys.argv` list, what is always stored at index 0?", "The name of the script file being executed."], ["What data type are all elements stored in `sys.argv`?", "String."], ["What is the syntax for a lambda function with two parameters that returns their sum?", "`lambda x, y: x + y`"], ["Identify the primary restriction on the body of a lambda function.", "It can only contain a single expression, not multiple statements or loops."], ["When is a lambda function preferred over a standard `def` statement?", "When a simple, 'throw-away' function is needed as an argument for another function."], ["What is the outcome of an `assert` statement if the tested condition evaluates to `False`?", "The interpreter raises an `AssertionError`."], ["What is the primary purpose of using the `assert` keyword in Python?", "Internal programme validation and debugging during the development process."], ["Concept: Python Module", "Definition: A file containing Python code (functions, classes, variables) that can be imported and reused by other programmes."], ["In a well-structured module, what is the purpose of the `if __name__ == '__main__':` block?", "It ensures the `main()` function only runs when the file is executed standalone, not when imported as a module."], ["Which import syntax allows a function to be called by its simple name without using dot notation?", "`from module_name import function_name`"], ["Why is the syntax `from module_name import *` generally discouraged?", "It 'pollutes' the namespace, increasing the risk of name clashes and making code harder to maintain."], ["Term: Qualified Name", "Definition: A name used with dot notation (e.g., `math.pi`) that identifies both the module and the specific component."], ["How can a programmer change a module's name for the duration of a script to shorten it?", "By using an alias with the `as` keyword (e.g., `import math as m`)."], ["What mathematical operation does `math.pow(10, 2)` perform based on positional arguments?", "It computes $10^2$, resulting in 100."], ["What happens if a function attempts to assign a value to a global name without using the `global` keyword?", "Python creates a new local variable with that name, 'hiding' the global one."], ["What is the purpose of a Shebang line in a Python module?", "It ensures compatibility when running the script on Unix-based systems."], ["In Python's functional composition, how can a lambda function be used with a general `plot()` function?", "It provides a custom mathematical formula to the `plot()` function on the fly."], ["How does Python handle an actual parameter if it is an expression, such as `double(2 + 3)`?", "The expression is evaluated first, and the resulting single value is passed as the argument."], ["What is the standard indentation suggested for a function body in Python?", "Four spaces."], ["Which built-in function returns the data type or class of a specific object?", "`type()`"], ["How is a user-defined module typically made accessible to a Python script?", "By saving it as a `.py` file in the same directory as the script."], ["What keyword is used to define an anonymous function?", "`lambda`"], ["In the syntax `assert condition, message`, what is the role of the 'message' parameter?", "It is an optional string printed to the console if an `AssertionError` is raised."], ["What is the return type of the `input()` function?", "A string."], ["What happens to the program flow when a `return` statement is executed inside a function?", "The function terminates immediately and control returns to the caller."], ["What list structure in the `sys` module is used to access command line arguments?", "`argv`"], ["What is the maximum number of expressions allowed in the body of a lambda function?", "One."]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
