@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi Unit 4 Part 2 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>Hindi &mdash; Unit 4 (Part 2)</h1>
+<p class="subtitle">79 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["परदेशी' कहानी की लेखिका कौन हैं?", "ममता कालिया"], ["ममता कालिया का जन्म किस वर्ष हुआ था?", "1940"], ["ममता कालिया किस प्रकार के लेखन के लिए जानी जाती हैं?", "मध्यमवर्गीय परिवारों के रोजमर्रा के जीवन, यथार्थवाद और हास्य के चित्रण के लिए।"], ["परदेशी' कहानी किस पृष्ठभूमि पर आधारित है?", "एक मध्यमवर्गीय पंजाबी परिवार की पृष्ठभूमि पर।"], ["कहानी के मुख्य पात्र नीरद कपूर का व्यवसाय क्या है?", "वह इलाहाबाद विश्वविद्यालय में लेक्चरर (अध्यापक) है।"], ["नीरद के बड़े भाई कहाँ नियुक्त हुए थे?", "केंद्रीय विद्यालय में शिक्षक के रूप में।"], ["नीरद की बहन अमरजीत किस पद पर कार्यरत थी?", "ट्रेनिंग कॉलेज में प्रशिक्षक (Trainer) के रूप में।"], ["नीरद के परिवार के सदस्य किन देशों में जाकर बस गए थे?", "कनाडा और अन्य विदेशी देशों में।"], ["नीरद ने विदेश जाने से क्यों इनकार कर दिया?", "वह अपनी भाषा, मिट्टी और जड़ों से जुड़े रहना चाहता था।"], ["नीरद के अनुसार, सात समुद्र पार जाने से उसके शब्दों का क्या होगा?", "उसके शब्दों की सारी 'खुशबू' निकल जाएगी और वह अपनी पहचान खो देगा।"], ["नीरद के भाई ने उसे कनाडा जाने पर कितनी गुना अधिक तनख्वाह का प्रलोभन दिया?", "चालीस (40) गुनी तनख्वाह का।"], ["कनाडा से नीरद के घर मेहमान बनकर कौन आया था?", "रिचर्ड पार्कर (Richard Parker)"], ["रिचर्ड पार्कर पेशे से क्या था?", "डॉक्टर"], ["रिचर्ड पार्कर कनाडा के किस क्षेत्र से आया था?", "अलबर्टा (Alberta)"], ["नीरद की पत्नी का नाम क्या है?", "भावना"], ["भावना ने रिचर्ड के स्वागत के लिए कितने दिनों तक कड़ी मेहनत की?", "तीन दिन"], ["अतिथि कक्ष सजाने के लिए भावना ने दीवार पर किनकी पेंटिंग्स लगाई थीं?", "पिकासो और विंशे (Picasso and Vinci)"], ["भावना ने रिचर्ड के कमरे में कौन सी विशेष सुविधाएँ उपलब्ध कराई थीं?", "4 इंच का फोम का गद्दा, नया फ्रिज, तुर्की तौलिया और विदेशी स्लीपर्स।"], ["नीरद के बच्चों ने मेहमान के लिए अपना क्या त्याग दिया?", "अपना प्रिय म्यूजिक सिस्टम (Music System)"], ["म्यूजिक सिस्टम पर बच्चों ने किन प्रसिद्ध संगीतकारों के कैसेट रखे थे?", "बाख (Bach), बीथोवन (Beethoven) और मोजार्ट (Mozart)"], ["रिचर्ड ने बीजी का अभिवादन किस प्रकार किया?", "हाथ जोड़कर 'नमस्ते' कहकर।"], ["रिचर्ड के लिए चाय के साथ मालती ने कौन से भारतीय व्यंजन बनाए थे?", "आलू-प्याज के पकोड़े और पापड़।"], ["पकोड़ा खाते समय रिचर्ड के साथ क्या हुआ?", "पकोड़ा बहुत गर्म था, जिससे वह कुर्सी से उछल पड़ा और पकोड़ा मुँह से बाहर निकाल दिया।"], ["रिचर्ड की जिज्ञासा किस विषय में सबसे अधिक थी?", "भारतीय इतिहास, घाटों के निर्माण और धार्मिक मान्यताओं के बारे में।"], ["रिचर्ड ने खजुराहो के बजाय कहाँ जाने की योजना बनाई?", "सारनाथ (Sarnath)"], ["रिचर्ड सारनाथ में क्या देखना चाहता था?", "बोधी वृक्ष (Tree of Knowledge)"], ["रिचर्ड के अनुसार, भारत में पानी के सिवा उसका कोई _____ नहीं होगा।", "दुश्मन"], ["रिचर्ड कितने वर्ष की उम्र से अकेले रह रहे थे?", "12 साल की उम्र से।"], ["रिचर्ड के अकेलेपन का मुख्य कारण क्या था?", "उसके माता-पिता का तलाक और उनकी दूसरी शादियाँ।"], ["रिचर्ड ने नीरद के घर की 'गड़बड़ियों' को क्या नाम दिया?", "दुर्लभ सुख (Rare Joy)"], ["रिचर्ड के अनुसार, पश्चिम में लोग किस तरह रह रहे हैं?", "एक 'द्वीप' की तरह अकेले।"], ["कहानी के अनुसार, भारतीय घर की असली गर्माहट क्या है?", "तीन पीढ़ियों का एक साथ प्रेम से रहना।"], ["नीरद ने किस बात पर गर्व महसूस किया (Pride)?", "इस बात पर कि उसने केवल रोटी (पैसों) के लिए अपनी मिट्टी नहीं छोड़ी।"], ["कहानी में 'परदेशी' शब्द का क्या गहरा अर्थ बताया गया है?", "वह व्यक्ति जिसकी सोच और व्यवहार अपने परिवार से पूरी तरह अलग हो चुका हो।"], ["बीजी और रिचर्ड के बीच संवाद का माध्यम क्या था?", "बिना किसी सामान्य भाषा के, केवल भावों और टीवी के माध्यम से।"], ["भावना को अंत में किस बात का अहसास हुआ?", "कि उसके पास मौजूद परिवार का साथ और प्रेम ही उसकी असली संपत्ति है।"], ["रिचर्ड इलाहाबाद के बाद कहाँ चला गया?", "बनारस (Banaras)"], ["ममता कालिया की भाषा शैली की एक विशेषता बताइए।", "संवाद-प्रधान और सरल हिंदी-पंजाबी मिश्रित भाषा।"], ["नीरद के अनुसार, एक साहित्यकार की असली पहचान कहाँ होती है?", "उसकी अपनी भाषा और परिवेश में।"], ["रिचर्ड ने भारतीय सामूहिकता (Collectivism) की तुलना किससे की?", "पश्चिमी अकेलेपन (Individualism) से।"], ["बीजी ने बच्चों को खाना खिलाने के लिए कौन सी कहानी सुनाई?", "भगतन बिल्ली की कहानी"], ["रिचर्ड ने भारतीय आतिथ्य को किस शब्द से संबोधित किया?", "डिलीशियस (Delicious)"], ["लेखिका ने मध्यमवर्गीय फ्लैट का वर्णन किस प्रकार किया है?", "एक 'अजायबघर' के रूप में जहाँ मोहब्बत या मजबूरी में साथ रहा जाता है।"], ["नीरद के भाइयों का विदेश जाने का दृष्टिकोण क्या था?", "आर्थिक उन्नति और 'नरक' (भारत की गरीबी) से छुटकारा पाना।"], ["कहानी का मुख्य संदेश क्या है?", "सच्चा सुख भौतिक प्रगति में नहीं, बल्कि पारिवारिक संबंधों और अपनी जड़ों से जुड़े रहने में है।"], ["रिचर्ड ने नीरद के परिवार को किस रूप में शिक्षित किया?", "उनके पास पहले से मौजूद खुशियों का मूल्य समझाकर।"], ["ममता कालिया की कहानियों में अक्सर किसका दृष्टिकोण प्रमुख होता है?", "महिला (स्त्री) दृष्टिकोण"], ["नीरद का परिवार अंततः कहाँ बस गया?", "इलाहाबाद में"], ["रिचर्ड को भारतीय परिवेश के बारे में जानकारी देने के लिए कौन घुमाने ले गया?", "नीरद और भावना (नदी किनारे)।"], ["नीरद ने किस बात को 'दलित्तर' (Dallidra) कहा?", "पैसों के पीछे भागने और अपनी पहचान बेचने की मानसिकता को।"], ["रिचर्ड की डायरी में क्या लिखा था?", "उसके एक महीने के भारत प्रवास का पूरा टाइम-टेबल।"], ["रिचर्ड ने 'इंसान' के बारे में क्या दार्शनिक बात कही?", "कि इंसान हर जगह एक सा है।"], ["कहानी में 'अतिथि देवो भव' की परंपरा को कौन जीवंत करता है?", "भावना"], ["मन्नू ने डिनर टेबल पर क्या गलती की?", "पानी गिलास में डालते समय मेज पर फैला दिया।"], ["रिचर्ड के अनुसार, बच्चों को क्या मिलना बहुत बड़ी बात है?", "एक 'नॉर्मल लड़कपन' (Normal Childhood)"], ["लेखिका के अनुसार, आधुनिक जीवन में रिश्तों के बीच क्या बढ़ रही है?", "मानसिक दूरी"], ["नीरद के बड़े भाई ने उसे क्या कहकर चिढ़ाया?", "कि वह बड़ा 'धुन' या 'मीसना' निकला जो बाहर नहीं जाना चाहता।"], ["रिचर्ड ने अपनी बहन के लिए क्या खरीदने की इच्छा जताई?", "बौद्ध उपासना के उपकरण।"], ["नीरद के घर में कौन-कौन सी पीढ़ियाँ एक साथ रह रही थीं?", "तीन पीढ़ियाँ: दादी (बीजी), माता-पिता (नीरद-भावना) और बच्चे (अन्नू-मन्नू)।"], ["रिचर्ड को कौन सी बात शब्दों से स्पष्ट न होने पर वह क्या करता था?", "अभिनय (Acting) करके समझाता था।"], ["रिचर्ड के लिए भोजन कैसा था?", "सीधा-सादा शाकाहारी भोजन।"], ["भावना को अपनी मेहनत की सार्थकता कब महसूस हुई?", "जब रिचर्ड ने उसके घर के माहौल की प्रशंसा की।"], ["कहानी का शीर्षक 'परदेशी' किसके लिए सबसे उपयुक्त बैठता है?", "रिचर्ड के लिए (जो अपनों के बीच भी पराया रहा) और उन प्रवासियों के लिए जो अपनी संस्कृति भूल गए।"], ["रिचर्ड के आने से पहले घर की क्या स्थिति थी?", "घर अस्त-व्यस्त (गड़बड़) था, पलस्तर उखड़ा हुआ था और रसोई घिचपिच थी।"], ["रिचर्ड को इलाहाबाद में कौन सा ऐतिहासिक स्थल पसंद आया?", "आनंद भवन"], ["रिचर्ड की हिंदी के प्रति समझ कितनी थी?", "अच्छा', 'हाँ', 'नहीं' जैसे दो-तीन शब्दों तक।"], ["नीरद ने विदेश जाने के फॉर्म का क्या किया?", "उसने फॉर्म फाड़ने की कोशिश की थी।"], ["रिचर्ड ने मन्नू को क्या कहकर खाना खाने के लिए मनाया?", "कि 'मैं तुम्हारा दोस्त हूँ'।"], ["नीरद के साहित्यिक क्षेत्र में रुचि होने के कारण वह क्या करता था?", "कॉलेज जाकर कई अखबारों की सुर्खियां देखता था।"], ["रिचर्ड के अनुसार, कनाडा में लोग कैसे रहते हैं?", "दीप (Island) की तरह अकेले।"], ["नीरद के भाई-भाभी ने रिचर्ड के बारे में फोन पर क्या निर्देश दिए थे?", "सफाई का ध्यान रखना और मच्छर-छिपकली न दिखने पाए।"], ["रिचर्ड के आने पर बच्चों की क्या प्रतिक्रिया थी?", "वे पहले संकोच में थे, फिर अपनी पुरानी बुलंदी (शरारतों) पर आ गए।"], ["कहानी के अंत में भावना रिचर्ड को क्या मानती है?", "एक शिक्षक (Teacher)"], ["ममता कालिया की कहानियों का मुख्य उद्देश्य क्या होता है?", "मानवीय संवेदनाओं और पारिवारिक मूल्यों को उजागर करना।"], ["रिचर्ड ने भारतीय घाटों और मूर्तियों के बारे में क्या सवाल किया?", "कि 'इतने सारे भगवानों से आप लोग कन्फ्यूज नहीं होते?'"], ["नीरद ने अपनी आवाज़ की 'खुशबू' को किससे जोड़ा है?", "अपनी मातृभूमि और भाषा के साहित्य से।"], ["रिचर्ड को भोजन के बाद क्या पीना पसंद था?", "चाय"], ["भावना के लिए घर की सबसे बड़ी चुनौती क्या थी?", "सीमित जगह (आयतन) में पूरे परिवार का सामंजस्य बिठाना।"], ["नीरद को किस बात पर 'नाज' (Pride) हुआ?", "रिचर्ड द्वारा उसके भारत में रहने के निर्णय की सराहना करने पर।"]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
