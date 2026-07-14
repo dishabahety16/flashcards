@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi Unit 2 Part 4 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>Hindi &mdash; Unit 2 (Part 4)</h1>
+<p class="subtitle">50 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["सृजनात्मक कहानी लेखन के तीन मुख्य चरण कौन-से हैं?", "योजना बनाना (Planning), मसौदा तैयार करना (Drafting) और परिष्कार करना (Refining)।"], ["कहानी लेखन की प्रक्रिया में 'PDR' का पूर्ण रूप क्या है?", "Plan (योजना), Draft (मसौदा), और Refine (परिष्कार)।"], ["कहानी लेखन के किस चरण को बिल्डर के 'ब्लूप्रिंट' (Blueprint) के समान माना जाता है?", "योजना (Planning) चरण को।"], ["मसौदा (Drafting) चरण का मुख्य उद्देश्य क्या है?", "कहानी को पहली बार लिखना, चाहे वह कच्ची या अधूरी ही क्यों न हो।"], ["कहानी के 'परिष्कार' (Refining) चरण में किन पहलुओं को सुधारा जाता है?", "भाषा, व्याकरण, संवाद और कहानी की बनावट।"], ["एक अच्छी मौलिक कहानी के तीन अनिवार्य गुण कौन-से हैं?", "नया विचार, स्पष्ट संदेश और प्रभावशाली अंत।"], ["योजना चरण (Planning Stage) में किन पाँच तत्वों पर विचार किया जाता है?", "विषय (Theme), पात्र (Characters), स्थान-काल (Setting), कथानक (Plot) और संदेश (Message)।"], ["TCSPM निमोनिक (Mnemonic) में 'S' किस तत्व को दर्शाता है?", "स्थान-काल (Setting)।"], ["मसौदा चरण (Drafting Stage) के तीन मुख्य भाग कौन-से हैं?", "परिचय (Introduction), मध्य भाग (Middle), और अंत (Ending)।"], ["कहानी का 'परिचय' (Introduction) भाग किसलिए डिज़ाइन किया जाता है?", "पाठक का ध्यान तुरंत अपनी ओर खींचने के लिए।"], ["कहानी के किस भाग में मुख्य समस्या और संघर्ष (Conflict) का वर्णन होता है?", "मध्य भाग (Middle) में।"], ["कहानी का 'अंत' (Ending) पाठक को क्या प्रदान करता है?", "समस्या का समाधान या एक अंतिम संदेश।"], ["कहानी लेखन में 'मौलिकता' (Originality) का क्या अर्थ है?", "कहानी की सोच, पात्र या दृष्टिकोण किसी और की नकल न होना।"], ["वह कहानी क्या कहलाती है जो दिए गए विषय को केंद्रीय धुरी बनाकर कथानक बुनती है?", "विषय-प्रेरित कहानी (Theme-inspired story)।"], ["L3 स्तर (Apply) पर कहानी का मसौदा लगभग कितने शब्दों में होना चाहिए?", "200-250 शब्द।"], ["कहानी को जीवंत बनाने के लिए उसमें कम से कम कितने संवाद (Dialogue) जोड़ने की सलाह दी जाती है?", "कम से कम दो।"], ["स्व-जाँच (Self-check) के लिए उपयोग किए जाने वाले 'ODA' चक्र का अर्थ क्या है?", "Outline (रूपरेखा), Draft (मसौदा), और Ask (प्रश्न पूछना)।"], ["5D विश्लेषण (5D Analysis) के पाँच आयाम कौन-से हैं?", "कथानक की मज़बूती, पात्र-चित्रण, भाषा-शैली, संदेश की स्पष्टता और मौलिकता।"], ["कथानक के विश्लेषण में एक स्पष्ट आरोह-अवरोह के तीन चरण क्या हैं?", "संघर्ष (Conflict), चरमोत्कर्ष (Climax), और समाधान (Resolution)।"], ["पात्र-चित्रण में 'राउंड' (Round) पात्र किसे कहा जाता है?", "वे पात्र जिनमें मानवीय जटिलता और गहराई होती है।"], ["पात्र-चित्रण में 'फ्लैट' (Flat) पात्र की क्या विशेषता है?", "वे केवल 'अच्छे' या 'बुरे' होते हैं और उनमें गहराई की कमी होती है।"], ["एक सशक्त कहानी की भाषा-शैली में किन तत्वों का समावेश होता है?", "सक्रिय वाक्य, संवेदनशील विवरण और उचित गति (pacing)।"], ["स्व-मूल्यांकन (Self-evaluation) के दौरान लेखक को अपनी कहानी को किस नज़र से देखना चाहिए?", "एक आलोचक (Critic) की नज़र से।"], ["साथी-समीक्षा (Peer Review) के दौरान पूछे जाने वाले तीन मुख्य प्रश्न क्या हैं?", "सबसे अच्छा क्या लगा? सबसे कमज़ोर क्या था? क्या संदेश स्पष्ट था?"], ["कहानी के मूल्यांकन के लिए 'SCALE' रूब्रिक के पाँच आधार क्या हैं?", "योजना (Planning), संरचना (Structure), पात्र-गहराई (Characters), भाषा (Language), और प्रभाव (Impact)।"], ["SCALE रूब्रिक में प्रत्येक आधार के लिए अधिकतम कितने अंक दिए जाते हैं?", "4 अंक (कुल 20)।"], ["SCALE रूब्रिक में किस स्कोर रेंज को 'प्रकाशन के लिए तैयार' माना जाता है?", "18-20 अंक।"], ["SCALE रूब्रिक में 14 से कम स्कोर होने पर क्या सुझाव दिया जाता है?", "मुख्य पुनर्लेखन (Major rewrite) आवश्यक है।"], ["L6 स्तर (Create) पर सृजन चरण में कहानी की शब्द सीमा क्या होनी चाहिए?", "300-400 शब्द।"], ["मौलिकता सुनिश्चित करने के लिए विषय पर आने वाले पहले विचार के साथ क्या करना चाहिए?", "उसे छोड़ देना चाहिए और कुछ असाधारण सोचना चाहिए।"], ["L6 स्तर पर कहानी का पहला वाक्य कैसा होना चाहिए?", "अत्यंत शक्तिशाली, जो पाठक का ध्यान तुरंत खींच ले।"], ["एक यादगार कहानी का अंत कैसा होना चाहिए?", "अप्रत्याशित (Unexpected) या सार्थक।"], ["तीन-चरणीय परिष्कार (Three-Pass Refinement) के 'पहले पास' में क्या जाँचा जाता है?", "कथानक (Plot)।"], ["तीन-चरणीय परिष्कार के 'तीसरे पास' का उद्देश्य क्या है?", "समग्र भावनात्मक प्रभाव (Overall emotional impact) महसूस करना।"], ["कहानी सृजन के लिए 'CREATE' चेकलिस्ट के मुख्य घटक क्या हैं?", "Concept, Round characters, Emotion, Action ending, Three-pass refinement, Evaluate।"], ["कहानी के मध्य भाग को संतुलित रखने के लिए क्या करना चाहिए?", "यह न बहुत लंबा हो और न ही बहुत छोटा।"], ["संवादों का उपयोग कहानी में क्यों किया जाता है?", "पात्रों की भावनाओं और व्यक्तित्व को बिना बताए उभारने के लिए।"], ["बिना संघर्ष (Conflict) वाली कहानी को कैसा माना जाता है?", "सपाट (Flat)।"], ["मौलिकता के विश्लेषण में 'सिंड्रेला' की कहानी को नए नज़रिए से सुनाना किसका उदाहरण है?", "मौलिकता बनाम नकल के अंतर का।"], ["कहानी के परिष्कार चरण में 'दोहराव' (Repetition) के साथ क्या किया जाता है?", "इसे हटा दिया जाता है।"], ["कहानी का संदेश (Message) क्या कार्य करता है?", "कहानी को एक उद्देश्य और गहरा अर्थ देता है।"], ["L6 स्तर पर पात्रों को यादगार बनाने के लिए क्या आवश्यक है?", "हर पात्र की एक कमज़ोरी और एक शक्ति होना।"], ["योजना के बिना कहानी लिखना किसके समान है?", "नक्शे के बिना यात्रा करने के समान।"], ["कहानी के शिल्प में 'उपमाओं और रूपकों' का प्रयोग क्यों किया जाता है?", "भाषा को सजाने और पाठक को कहानी 'महसूस' कराने के लिए।"], ["पुनर्लेखन (Rewriting) को किस चरण की असली परीक्षा माना जाता है?", "परिष्कार (Refining) चरण की।"], ["SCALE रूब्रिक में '14-17' के बीच के स्कोर का क्या अर्थ है?", "मामूली सुधार (Minor refinements) की आवश्यकता है।"], ["TCSPM में 'P' का क्या अर्थ है?", "कथानक (Plot)।"], ["कहानी के 'अंत' में किस प्रकार के समाधान से बचना चाहिए?", "साधारण 'और वे खुशी से रहने लगे' जैसे अनुमानित अंत से।"], ["लेखन प्रक्रिया में 'योजना' (Planning) की तुलना निर्माण कार्य के किस चरण से की गई है?", "blueprint (नक्शा) तैयार करने से।"], ["कहानी की गुणवत्ता जाँचने के लिए '5-प्रश्न रूपरेखा' (5-question framework) का उपयोग कब किया जाता है?", "L3 स्तर पर मसौदा तैयार करने के बाद स्व-जाँच के लिए।"]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
