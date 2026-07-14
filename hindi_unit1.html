@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi Unit 1 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>Hindi &mdash; Unit 1</h1>
+<p class="subtitle">50 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["हिंदी साहित्य में 'गद्य' (Prose) का क्या अर्थ है?", "विचारों की सहज, स्वाभाविक और छंद-रहित अभिव्यक्ति।"], ["गद्य और काव्य (पद्य) में मुख्य अंतर क्या है?", "काव्य भावनाओं की अभिव्यक्ति करता है, जबकि गद्य विचारों और तर्कों का।"], ["आधुनिक हिंदी गद्य का जनक किसे माना जाता है?", "भारतेंदु हरिश्चंद्र को।"], ["किस युग में हिंदी गद्य की भाषा की शुद्धता और व्याकरणिक अनुशासन पर विशेष बल दिया गया?", "द्विवेदी युग में।"], ["गद्य साहित्य की उस विधा को क्या कहते हैं जिसमें लेखक अपने जीवन की घटनाओं का स्वयं वर्णन करता है?", "आत्मकथा (Autobiography)।"], ["हिंदी गद्य के विकास में 'आचार्य महावीर प्रसाद द्विवेदी' का मुख्य योगदान क्या था?", "हिंदी गद्य को परिमार्जित और परिपक्व स्वरूप प्रदान करना।"], ["प्रारंभिक हिंदी गद्य का प्रयोग किन क्षेत्रों तक सीमित था?", "धार्मिक, दार्शनिक और ऐतिहासिक ग्रंथों तक।"], ["गद्य की वह विधा जिसमें किसी यात्रा का रोचक वर्णन किया जाता है, _____ कहलाती है।", "यात्रा-वृत्तांत (Travelogue)"], ["हिंदी गद्य की कोई एक मुख्य विशेषता बताइए।", "सरलता, स्पष्टता और तार्किक भाषा।"], ["एक अच्छे पत्र में भाषा का लहजा (Tone) कैसा होना चाहिए?", "शिष्ट और विनम्र (Polite)।"], ["प्रयोजनमूलक हिंदी में 'पत्रांक' का क्या अर्थ है?", "पत्र की संदर्भ संख्या (Reference Number)।"], ["पत्र लेखन में 'विषय' (Subject) लिखने का मुख्य उद्देश्य क्या है?", "पत्र के उद्देश्य को संक्षेप में स्पष्ट करना।"], ["व्यक्तिगत पत्र (Personal Letters) किन्हें लिखे जाते हैं?", "परिवार के सदस्यों, मित्रों या परिचितों को।"], ["व्यावसायिक पत्रों (Business Letters) का मुख्य प्रयोजन क्या होता है?", "वाणिज्यिक या व्यावसायिक कार्यों के लिए सूचनाओं का आदान-प्रदान।"], ["नौकरी के आवेदन पत्र (Job Application) के साथ अपनी योग्यताओं का विवरण देना क्या कहलाता है?", "बायोडाटा या स्ववृत्त (Résumé/CV)।"], ["अवकाश हेतु प्रार्थना पत्र में अनिवार्य रूप से किसका उल्लेख होना चाहिए?", "अवकाश का स्पष्ट कारण और अवधि (Duration)।"], ["संपादक के नाम पत्र (Letter to the Editor) का मुख्य केंद्र क्या होना चाहिए?", "लोकहित या सामाजिक समस्याओं से संबंधित विषय।"], ["पूछताछ पत्र (Enquiry Letter) का उद्देश्य क्या है?", "उत्पादों या सेवाओं की गुणवत्ता, मूल्य और उपलब्धता की जानकारी लेना।"], ["मूल्य सूची पत्र (Price List Letter) में क्या मंगाया जाता है?", "वस्तुओं या सेवाओं की नवीनतम दर तालिका।"], ["आदेश पत्र (Order Letter) लिखते समय माल की कौन सी जानकारी देना आवश्यक है?", "माल की मात्रा, गुणवत्ता और विशिष्ट विवरण।"], ["शिकायती पत्र (Complaint Letter) लिखते समय किस प्रकार की भाषा का प्रयोग वर्जित है?", "कठोर या अभद्र भाषा का।"], ["बैंक में नया खाता खोलने के लिए लिखे जाने वाले पत्र में किस जानकारी की आवश्यकता होती है?", "खाते का प्रकार और व्यक्तिगत विवरण।"], ["बैंक खाता स्थानांतरण (Transfer) पत्र में किन दो शाखाओं का उल्लेख आवश्यक है?", "पुरानी शाखा और नई शाखा का विवरण।"], ["बैंक खाता बंद करने के अनुरोध पत्र में क्या बताना अनिवार्य है?", "खाता बंद करने का ठोस कारण।"], ["व्यावसायिक पत्र के अंत में 'भवदीय' या 'आपका विश्वासी' के बाद क्या आता है?", "हस्ताक्षर और पदनाम (Designation)।"], ["यदि किसी कंपनी को पुस्तकें मंगानी हैं, तो वह किस प्रकार का पत्र लिखेगी?", "आदेश पत्र (Order Letter)।"], ["घटिया माल प्राप्त होने पर विक्रेता को कौन सा पत्र लिखा जाता है?", "शिकायती पत्र (Complaint Letter)।"], ["व्यावसायिक प्रस्ताव पत्र (Business Proposal) का एक उदाहरण दीजिए।", "नए उत्पादों की सूचना देते हुए बिक्री का प्रस्ताव देना।"], ["पत्र में 'सेवा में' के ठीक बाद किसका उल्लेख किया जाता है?", "प्राप्तकर्ता का पद और पता।"], ["माल भेजने में देरी होने पर लिखे गए पत्र में विक्रेता से क्या जानकारी मांगी जाती है?", "देरी का कारण और माल भेजने की संभावित तिथि।"], ["गद्य साहित्य की वह विधा क्या है जो किसी विषय पर तार्किक और वैचारिक लेखन प्रस्तुत करती है?", "निबंध (Essay)।"], ["आधुनिक युग में गद्य के विकास का एक प्रमुख तकनीकी कारण क्या था?", "मुद्रण तकनीक (Printing Technology) का विकास।"], ["व्यावसायिक पत्र में 'सधन्यवाद' का प्रयोग कहाँ किया जाता है?", "मुख्य संदेश के अंत में और समापन से पहले।"], ["नौकरी के आवेदन पत्र में 'संबोधन' के लिए सामान्यतः किस शब्द का प्रयोग होता है?", "महोदय या महोदया।"], ["बैंकिंग पत्राचार में खाता संख्या (Account Number) का उल्लेख करना क्यों आवश्यक है?", "खाते की सही पहचान और सुरक्षा सुनिश्चित करने के लिए।"], ["आदेश पत्र में भुगतान की शर्तों (Payment Terms) का उल्लेख करना क्यों जरूरी है?", "भविष्य में होने वाले वित्तीय विवादों से बचने के लिए।"], ["गद्य की वह विधा जिसमें पात्रों के माध्यम से कहानी मंच पर प्रस्तुत की जाती है, _____ कहलाती है।", "नाटक (Drama)"], ["भारतेंदु युग में गद्य का मुख्य उद्देश्य क्या था?", "सामाजिक जागरण और राष्ट्रीय चेतना का प्रसार।"], ["शिकायती पत्र में सामग्री खराब होने पर क्या मांग की जा सकती है?", "सामग्री को बदलने (Replacement) या पैसे वापस करने (Refund) की।"], ["किसी उत्पाद की 'नवीनतम सूची' (Latest List) मंगाने का उद्देश्य क्या होता है?", "बाजार में उपलब्ध नए उत्पादों और उनकी वर्तमान दरों की जानकारी प्राप्त करना।"], ["पत्र लेखन की प्रभावशीलता के लिए भाषा कैसी होनी चाहिए?", "व्याकरणिक त्रुटियों से मुक्त और सरल।"], ["व्यावसायिक पत्र में 'प्रति' (Copies) शब्द का प्रयोग किस लिए किया जाता है?", "मंगाई जाने वाली वस्तुओं की संख्या बताने के लिए।"], ["हिंदी गद्य को 'आम लोगों तक पहुँचाने' का श्रेय किस विधा की सरलता को जाता है?", "गद्य (Prose) विधा की।"], ["द्विवेदी युग के बाद गद्य साहित्य में किस प्रकार की गहराई आई?", "मनोवैज्ञानिक गहराई और बौद्धिक दृष्टि।"], ["पत्र लेखन कौशल (Skill) का दैनिक जीवन में क्या महत्व है?", "यह विभिन्न वास्तविक स्थितियों में आत्मविश्वास से संवाद करने में मदद करता है।"], ["संपादक को पत्र लिखते समय लेखक का दृष्टिकोण कैसा होना चाहिए?", "जिम्मेदार और औपचारिक।"], ["बैंक को लिखे गए पत्र में अपना संपर्क नंबर देना क्यों उचित है?", "ताकि बैंक अधिकारी आवश्यकता पड़ने पर तुरंत संपर्क कर सकें।"], ["व्यवसाय में 'प्रस्ताव पत्र' (Proposal Letter) कब भेजा जाता है?", "जब विक्रेता संभावित ग्राहक को नए उत्पादों या सेवाओं की जानकारी देना चाहता है।"], ["गद्य की वह लघु विधा जो किसी एक घटना या चरित्र पर केंद्रित होती है, _____ कहलाती है।", "कहानी (Short Story)"], ["व्यावसायिक पत्राचार में 'आकर्षक शर्तें' (Attractive Terms) क्या दर्शाती हैं?", "विक्रेता द्वारा दी जाने वाली विशेष छूट या बेहतर सेवा की पेशकश।"]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
