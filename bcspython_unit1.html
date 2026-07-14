@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCs Python Unit 1 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>B.Cs Python &mdash; Unit 1</h1>
+<p class="subtitle">100 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["Who is the creator of the Python programming language?", "Guido van Rossum"], ["In what year was Python first released?", "1991"], ["What is the name of the reference implementation of Python written in C?", "CPython"], ["Python uses the _____ tool for package management, which connects to the Python Package Index (PyPI).", "pip"], ["Which organisation is responsible for the development and maintenance of Python?", "The Python Software Foundation (PSF)"], ["How many reserved keywords exist in Python as of the provided material?", "33"], ["Which three Python keywords start with a capital letter?", "True, False, and None"], ["Attempting to use a keyword as an identifier will result in a _____.", "SyntaxError"], ["Python is described as a _____ language, meaning that 'pass' and 'Pass' are treated as distinct names.", "case-sensitive"], ["What feature allows Python to infer a variable's data type from the context of its assigned value?", "Dynamic typing"], ["Instead of being 'containers' for values, Python variables are conceptually viewed as _____ or pointers to objects.", "references"], ["Which Python function can be applied to verify the specific memory address of an object?", "id()"], ["Term: Aliasing", "Definition: A situation where two or more variable names refer to the exact same memory address."], ["Which operator is used to perform an identity check to see if two variables point to the same object in memory?", "is"], ["In Python, the _____ operator is used to check for value equality between two objects.", "=='"], ["What symbol is used to initiate a single-line comment in Python?", "#"], ["How are multi-line comments typically implemented if triple quotes are not used?", "By placing a # at the start of every line."], ["What characters are used to define multi-line string literals that can also function as comments?", "Triple quotes (''' or \"\"\")"], ["Unlike languages that use curly braces, Python uses _____ to define the structure and scope of code blocks.", "indentation"], ["What is the standard recommended number of spaces per indentation level in Python?", "Four spaces"], ["Which character serves as an explicit line-continuation character for multi-lining a long statement?", "\\"], ["Statements contained within parentheses, square brackets, or _____ can span multiple lines automatically.", "curly braces"], ["What punctuation mark is required after headers like 'if', 'for', or 'def' to trigger an indented block?", "Colon (:)"], ["What is the primary rule regarding the first character of a Python identifier?", "It must start with a letter (A-Z, a-z) or an underscore (_)."], ["Which character set does Python support, allowing it to represent scripts from across the world?", "Unicode"], ["In identifier naming conventions, what does a name starting with two underscores (e.g., `__salary`) usually signal?", "A private identifier that should not be accessed from outside the class."], ["What defines the property of 'immutability' in Python strings?", "The characters of the string cannot be changed, added, or removed in place after creation."], ["Python uses _____-based indexing, where the first character is at position 0.", "zero"], ["In Python's negative indexing system, what index value refers to the last character of a string?", "-1"], ["What is the result of attempting to access a string index that exceeds the string's length?", "IndexError"], ["The syntax for string slicing is `s[start : end]`; is the 'end' index inclusive or exclusive?", "Exclusive"], ["What is the 'Pythonic' shorthand syntax to reverse a character sequence using slicing?", "s[::-1]"], ["What operator is used for string repetition (replication)?", "*"], ["What built-in function returns the total number of characters in a string?", "len()"], ["Which string method converts only the first letter of the string to uppercase and the rest to lowercase?", "capitalize()"], ["What is the difference between the string methods `find()` and `index()` when a substring is not found?", "`find()` returns -1, whereas `index()` raises an exception."], ["Which method is used to remove leading and trailing whitespace from a string?", "strip()"], ["The _____ method breaks a string into a list of substrings based on a specified separator.", "split()"], ["Which string method takes an iterable (like a list) and joins its elements into a single string using a separator?", "join()"], ["In Python 3.x, what is the resulting data type of a standard division operation like `10 / 2`?", "Floating-point number (float)"], ["What is the name of the operator `$//$` used to obtain an integer result from division?", "Floor division"], ["The modulus operator (`%`) returns the _____ of a division operation.", "remainder"], ["What is the result of the logical expression `True and False`?", "False"], ["In Python decision control, which number is treated as the Boolean value 'False'?", "0"], ["What keyword is used in a multi-way decision ladder to check additional conditions after an initial 'if'?", "elif"], ["Term: Ternary Operator", "Definition: A conditional expression that allows testing a condition in a single line using the syntax `[on_true] if [condition] else [on_false]`."], ["Which loop type is generally best suited for situations where the number of iterations is unknown beforehand?", "while loop"], ["In the function `range(1, 10)`, what is the final number generated in the sequence?", "9"], ["What keyword is used to skip the remainder of the current loop iteration and move to the next one?", "continue"], ["What keyword acts as a null-operation placeholder where a statement is syntactically required?", "pass"], ["A loop's optional _____ block executes only if the loop finishes naturally without being interrupted by a `break` statement.", "else"], ["What data type is always returned by the `input()` function?", "String (str)"], ["In the `print()` function, which parameter defines the character printed at the end of the output (defaults to a newline)?", "end"], ["Which modern string formatting method is denoted by a leading 'f' before the opening quotation mark?", "f-strings (Formatted string literals)"], ["Inside an f-string, what characters are used to enclose variables or expressions?", "Curly braces {}"], ["What is the purpose of the `sep` parameter in the `print()` function?", "It specifies the separator between multiple objects being printed."], ["According to the provided hierarchy, which operator has higher precedence: Multiplication or Addition?", "Multiplication"], ["Which bitwise operator performs a 'not' operation, inverting the bits of its operand?", "~ (Tilde)"], ["The _____ operator checks if a specific value or variable exists within a sequence like a list or string.", "in"], ["What is the result of `10 // 3` in Python?", "3"], ["Which data type is used to represent an unordered set of key-value pairs?", "Dictionary (dict)"], ["How does a Python 'Tuple' differ from a 'List' regarding changeability?", "Tuples are immutable (cannot be changed), while lists are mutable."], ["Which operator is used to calculate exponentiation (raising a number to a power)?", "**"], ["What is the literal used to denote the absence of a value or 'nothing' in Python?", "None"], ["Term: Implicit Type Conversion", "Definition: An automatic process where the Python interpreter converts one data type to another without user involvement to avoid data loss."], ["What is the term for the manual conversion of a data type by a user, such as using `int()` on a string?", "Explicit Type Conversion (or type casting)"], ["In the expression `x = 15 + 1.3`, the result `16.3` makes this a _____ expression.", "Floating"], ["Bitwise operators manipulate data at the _____ level.", "bit"], ["What does the bitwise left shift operator (`<<`) do to a number?", "It shifts the bits to the left, effectively multiplying the number by powers of two."], ["Which string method returns `True` only if all characters in the string are alphabetic?", "isalpha()"], ["Which string method returns `True` if all cased characters in the string are uppercase?", "isupper()"], ["The `enumerate()` function is often applied in loops when a developer needs to track both the _____ and the value of elements.", "index"], ["What error is triggered if a developer forgets the colon after an 'if' statement?", "SyntaxError"], ["Python's 'batteries-included' philosophy refers to its massive _____.", "standard library"], ["In which mode is the Python interpreter applied for exploring syntax via the `>>>` prompt?", "Interactive mode"], ["What is the primary file extension for Python scripts?", ".py"], ["Which environment, typically installed with Python, provides a basic GUI for editing and debugging?", "IDLE"], ["What feature of Python automatically manages memory allocation and deallocation?", "Garbage collection"], ["Which bitwise operator returns 1 only if exactly one of the corresponding bits of the operands is 1?", "^ (XOR)"], ["What is the term for a single, smallest individual unit in a Python program, such as a keyword or punctuator?", "Token"], ["The `range(start, stop, step)` function's 'step' parameter determines the _____ between each number in the sequence.", "increment"], ["Which string method is used to replace all occurrences of a substring with a new substring?", "replace()"], ["What character set was the older, more limited standard before Unicode became dominant?", "ASCII"], ["A _____ string, created by prepending an 'r', treats backslashes as literal characters.", "raw"], ["Which assignment operator is a shortcut for `a = a + b`?", "+="], ["In a logical ladder, why should the most likely condition be placed at the top?", "To improve performance by reducing the number of checks performed at runtime."], ["What function allows a developer to convert a character into its corresponding Unicode integer code point?", "ord()"], ["What function converts a Unicode code point (integer) back into its character representation?", "chr()"], ["In string slicing, what happens if the start index is omitted (e.g., `s[:5]`)?", "It defaults to the beginning of the string (index 0)."], ["What Python application field uses the libraries Scikit-learn and TensorFlow?", "Machine Learning / Artificial Intelligence"], ["Which library is specifically mentioned for performing web scraping in Python?", "BeautifulSoup (or Scrapy)"], ["What Python library is commonly applied for scientific and numeric programming?", "SciPy"], ["Which framework is a common choice for Python web development?", "Django (or Flask)"], ["What hardware platform is famously known for using Python for its high-level embedded computations?", "Raspberry Pi"], ["In the list `[10, 20, 30, 40]`, what is the result of `list[1:3]`?", "[20, 30]"], ["Which Python implementation is specifically designed for the Java platform?", "Jython"], ["What term is used to describe a programming model like procedural, functional, or object-oriented?", "Programming paradigm"], ["In bitwise operations, what is the result of `$10 \\, \\& \\, 4$`?", "0"], ["What Python function provides the version of Python currently being used?", "sys.version (after importing sys)"], ["Which Python keyword is used to define a function?", "def"]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
