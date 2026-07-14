@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCA Python Unit 5 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>BCA Python &mdash; Unit 5</h1>
+<p class="subtitle">65 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["What is the primary reason computers require file handling for data storage?", "Primary memory (RAM) is volatile and loses data when powered down."], ["Which Python object acts as the bridge between a programme and data stored on a physical disk?", "File object"], ["How are text files and binary files distinguished by the way Python reads their data?", "Text files are read as strings, while binary files are handled as bytes."], ["Which file mode is the default when using the Python open() function?", "r (Read mode)"], ["What is the result of opening an existing file in 'w' (Write) mode?", "The existing content is truncated or erased."], ["Which mode should be used to add data to the end of an existing file without overwriting it?", "a (Append mode)"], ["Describe the specific functionality of the 'x' access mode in Python.", "It performs exclusive creation, failing if the file already exists."], ["What is the difference between the 'r+' and 'w+' file modes regarding file existence?", "The 'r+' mode requires the file to exist, whereas 'w+' creates it if it does not."], ["Which Python function is required to allocate system resources to a file before manipulation?", "open()"], ["What does the 'b' character represent when added to a file mode like 'rb'?", "Binary mode"], ["Which method is used to read exactly $n$ characters from an opened text file?", "read(n)"], ["The method that retrieves one single line of text from a file at a time is _____.", "readline()"], ["What is the return type of the readlines() method?", "A list of strings"], ["Why is the close() method considered essential in file handling?", "It ensures changes are saved and frees up system resources."], ["What is the advantage of using the 'with' statement for file operations?", "It automatically closes the file even if an exception occurs."], ["Which standard library module is used for the serialization and deserialization of Python objects?", "pickle"], ["Define the process of 'serialization' in the context of the pickle module.", "Converting a Python object into a byte stream for storage."], ["What does 'CSV' stand for in data storage?", "Comma Separated Values"], ["Which function in the csv module is used to iterate over rows in a flat text data file?", "csv.reader()"], ["How does the csv.DictReader class represent each row in a CSV file?", "As a dictionary where column headers are keys."], ["When using csv.writer(), which method is used to save a single list as a row of data?", "writerow()"], ["Which external library is recommended for efficiently handling very large CSV datasets?", "pandas"], ["In Pandas, which function is used to load data from a .csv file into a DataFrame?", "read_csv()"], ["What is JSON (JavaScript Object Notation)?", "A text-based, human-readable format for data interchange."], ["Which Python function parses a JSON file directly into a Python dictionary?", "json.load()"], ["Which JSON function is used to convert a Python dictionary into a JSON-formatted string?", "json.dumps()"], ["What is the purpose of the 'indent' parameter in the json.dump() function?", "It specifies the number of spaces for pretty-printing the output."], ["In Python, an object that describes a runtime error is called an _____.", "exception"], ["What is the primary goal of exception handling in programming?", "To allow the programme to respond to errors instead of crashing."], ["Which block in a try statement contains the code that might cause an error?", "try"], ["In a try...except structure, when does the 'else' block execute?", "Only if no exceptions were raised in the try block."], ["What is the specific purpose of the 'finally' block in exception handling?", "To execute cleanup code regardless of whether an error occurred."], ["Which keyword is used to manually trigger a specific exception in Python?", "raise"], ["The error raised when attempting to divide a number by zero is _____.", "ZeroDivisionError"], ["Which built-in exception is raised when a function receives an argument of the correct type but an inappropriate value?", "ValueError"], ["What is the base class for all built-in exceptions in Python's hierarchy?", "BaseException"], ["Why should specific exceptions be caught before general ones in a try...except statement?", "Python matches the first compatible clause, so a general handler would block specific ones."], ["How can a programmer define a custom user-defined exception?", "By creating a new class that inherits from the Exception class."], ["What does the EAFP principle stand for in Pythonic error handling?", "Easier to Ask Forgiveness than Permission"], ["Which library is the most popular choice for rendering 2D data visualisations in Python?", "Matplotlib"], ["What is the common alias used when importing the matplotlib.pyplot module?", "plt"], ["Which NumPy function is used to create an array of values with a specific start, stop, and step size?", "np.arange()"], ["How do you plot multiple curves on the same set of axes using plt.plot()?", "Pass multiple pairs of $x$ and $y$ arrays as arguments to the function."], ["Which Matplotlib method is used to add a descriptive title to the top of a plot?", "plt.title()"], ["What is the purpose of the plt.legend() method?", "To display a key identifying different data series in the plot."], ["In NumPy, what is the purpose of the polyfit() function?", "To find the coefficients of a polynomial that best fits a set of data points."], ["Which function converts polynomial coefficients into a callable polynomial object?", "numpy.poly1d()"], ["How is a non-linear exponential relationship linearised for curve fitting in NumPy?", "By taking the logarithm of the $y$ data values."], ["What is a bar graph specifically used to represent?", "Categorical data using rectangular bars to show total observations."], ["Which Matplotlib function is used to create a bar chart?", "plt.bar()"], ["Define a histogram in the context of data visualisation.", "A graph showing the frequency distribution of continuous numerical data."], ["In Matplotlib's hist() function, what do 'bins' represent?", "The intervals or ranges into which the data is divided."], ["What is the primary difference in usage between a bar graph and a histogram?", "Bar graphs compare distinct categories, while histograms show continuous distributions."], ["Which function is used to generate a pie chart in Matplotlib?", "plt.pie()"], ["In a pie chart, what does the 'explode' parameter do?", "It offsets specific slices outward from the centre for emphasis."], ["Which toolkit must be imported to enable 3D plotting capabilities in Matplotlib?", "mplot3d"], ["What keyword argument is passed to pyplot.axes() to create a 3D plotting area?", "projection='3d'"], ["Which method is used to draw a three-dimensional surface plot?", "plot_surface()"], ["How does the 'autopct' parameter function in a pie chart?", "It formats and displays the percentage value on each slice."], ["What is the purpose of the numpy.linspace() function?", "To create an array of evenly spaced numbers over a specified interval."], ["The standard equation used for exponential curve fitting in the source material is _____.", "$y = e^{ax} \\cdot e^b$"], ["Which method is used to set the label for the vertical axis in a plot?", "plt.ylabel()"], ["What does the plt.show() function perform?", "It renders and displays the finished figure window."], ["Which built-in exception occurs if a programme tries to access a file that does not exist?", "FileNotFoundError"], ["What is the result of using the 'a' mode if the specified file does not yet exist?", "A new file is created."]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
