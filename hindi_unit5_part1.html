@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi Unit 5 Part 1 Flashcards</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f6f3ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#2a2a2a;padding:1.5rem 1rem 2rem}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:1.55rem;color:#2d5a7b;margin-top:.8rem;text-align:center}
+.subtitle{font-size:.92rem;color:#8a8275;margin:.35rem 0 1.2rem;text-align:center}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem}
+.progress-track{flex:1;height:4px;background:#ddd7cd;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2d5a7b;border-radius:2px;transition:width .3s ease}
+.progress-label{font-size:.78rem;color:#8a8275;white-space:nowrap}
+.scene{width:100%;max-width:560px;height:320px;perspective:900px;cursor:pointer}
+.card{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:2rem 2.25rem;display:flex;flex-direction:column;overflow-y:auto}
+.card-front{background:#fff;border:1px solid #d6cfc4;box-shadow:0 2px 20px rgba(26,35,50,.08)}
+.card-back{background:#2d5a7b;color:#f0f6fa;transform:rotateY(180deg);box-shadow:0 2px 20px rgba(26,35,50,.12)}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.8rem;opacity:.55;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.card-back .card-label{color:#a9cbd9}
+.card-text{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:1.1rem;line-height:1.55}
+.card-hint{font-size:.72rem;text-align:center;color:#b5ae9e;margin-top:.8rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.controls{display:flex;gap:.65rem;margin-top:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.btn{height:40px;padding:0 1.3rem;border-radius:8px;border:1px solid #d6cfc4;background:#fff;color:#2d5a7b;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.btn:hover{background:#eae6df}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.shuffle{border-style:dashed}
+.kbd-hints{margin-top:.8rem;font-size:.72rem;color:#b5ae9e;text-align:center}
+.kbd{display:inline-block;background:#eae6df;border:1px solid #d6cfc4;border-radius:4px;padding:.1em .45em;font-family:monospace;font-size:.72rem;margin:0 .1em}
+@media(max-width:480px){
+  .scene{height:290px}
+  .card-face{padding:1.5rem 1.25rem}
+  .card-text{font-size:1rem}
+  .kbd-hints{display:none}
+}
+</style>
+</head>
+<body>
+<h1>Hindi &mdash; Unit 5 (Part 1)</h1>
+<p class="subtitle">55 Flashcards</p>
+<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="pf"></div></div><span class="progress-label" id="pl"></span></div>
+<div class="scene" id="scene">
+<div class="card" id="card">
+<div class="card-face card-front">
+<div class="card-label">Question</div>
+<div class="card-text" id="qtext"></div>
+<div class="card-hint">Tap to reveal answer</div>
+</div>
+<div class="card-face card-back">
+<div class="card-label">Answer</div>
+<div class="card-text" id="atext"></div>
+</div>
+</div>
+</div>
+<div class="controls">
+<button class="btn" id="prev" onclick="go(-1)">&larr; Prev</button>
+<button class="btn shuffle" id="shuf" onclick="shuffle()">&#x1F500; Shuffle</button>
+<button class="btn" id="next" onclick="go(1)">Next &rarr;</button>
+</div>
+<p class="kbd-hints"><kbd class="kbd">&larr;</kbd> prev &nbsp; <kbd class="kbd">Space</kbd> flip &nbsp; <kbd class="kbd">&rarr;</kbd> next</p>
+<script>
+const DATA=[["अकेली' कहानी की लेखिका कौन हैं?", "मन्नू भंडारी।"], ["मन्नू भंडारी किस साहित्यिक आंदोलन की प्रमुख लेखिका मानी जाती हैं?", "नई कहानी आंदोलन।"], ["लेखिका मन्नू भंडारी का जन्म कब और कहाँ हुआ था?", "1931 में, भानपुरा (मध्य प्रदेश) में।"], ["मन्नू भंडारी के लेखन की मुख्य विशेषता क्या है?", "स्त्री मनोविज्ञान का यथार्थवादी और मनोवैज्ञानिक चित्रण।"], ["अकेली' कहानी की मुख्य पात्र कौन है?", "सोमा बुआ।"], ["सोमा बुआ के जीवन की सबसे बड़ी त्रासदी क्या थी?", "उनके जवान बेटे की मृत्यु और पति का संन्यासी हो जाना।"], ["सोमा बुआ के पति वर्ष में कितने महीने के लिए घर आते थे?", "केवल एक महीने के लिए।"], ["सोमा बुआ के पति हरिद्वार में कितने महीने बिताते थे?", "ग्यारह महीने।"], ["सोमा बुआ का अकेलापन दूर करने का क्या तरीका था?", "पड़ोसियों के सामाजिक उत्सवों (विवाह, मुंडन) में बढ़-चढ़कर भाग लेना।"], ["सोमा बुआ के पति का उनके प्रति व्यवहार कैसा था?", "स्नेहहीन, उदासीन और कठोर।"], ["सोमा बुआ की एकमात्र सहानुभूतिपूर्ण पड़ोसिन का नाम क्या है?", "राधा भाभी।"], ["किशोरीलाल के यहाँ मुंडन के उत्सव में सोमा बुआ ने क्या सहायता की?", "गुलाबजामुन बनाने और भट्टी सँभालने का काम किया।"], ["सोमा बुआ ने समधी के यहाँ विवाह में जाने के लिए क्या विशेष तैयारी की?", "अपनी सफेद साड़ी को पीले रंग में रंगा और नई चूड़ियाँ पहनीं।"], ["सोमा बुआ ने विवाह का उपहार खरीदने के लिए अपनी कौन सी प्रिय वस्तु बेची?", "अपने मृत पुत्र की एकमात्र निशानी (अंगूठी)।"], ["अंगूठी बेचने का निर्णय बुआ के व्यक्तित्व के किस पहलू को दर्शाता है?", "सामाजिक सम्मान और अपनापन पाने की उनकी गहरी इच्छा को।"], ["सोमा बुआ ने अपनी साड़ी रंगने के लिए कितना पैसा खर्च किया?", "एक आना (पीला रंग खरीदने के लिए)।"], ["सोमा बुआ की आर्थिक स्थिति का मुख्य आधार क्या था?", "उनकी एक कोठरी से आने वाला किराया।"], ["राधा भाभी ने बुआ के लिए बाज़ार से क्या-क्या सामान खरीदा?", "एक साड़ी, ब्लाउज का कपड़ा और चाँदी की सिंदूरदानी।"], ["पड़ोस की नंदा ने सोमा बुआ को क्या जानकारी दी थी?", "कि विवाह के बुलावे की लिस्ट में बुआ का नाम शामिल है।"], ["विवाह वाले दिन सोमा बुआ ने शाम के सात बजे तक कहाँ इंतज़ार किया?", "अपनी छत पर, गली की ओर मुँह करके।"], ["कहानी के अंत में सात बजने पर सोमा बुआ क्या करती हैं?", "वे चुपचाप अपना सारा सजाया हुआ सामान वापस संदूक में रख देती हैं।"], ["कहानी का 'मौन अंत' किस बात का प्रतीक है?", "सोमा बुआ की गहरी मानसिक पीड़ा और सामाजिक उपेक्षा का।"], ["अकेली' कहानी का मुख्य विषय (Theme) क्या है?", "वृद्ध स्त्री का अकेलापन, परित्याग और सामाजिक संवेदनहीनता।"], ["सोमा बुआ के संन्यासी पति की धार्मिकता पर लेखिका ने क्या कटाक्ष किया है?", "कि वे धर्म के नाम पर अपने मानवीय और पारिवारिक दायित्वों को भूल गए।"], ["सोमा बुआ के लिए दूसरों के घर काम करना क्या था?", "अकेलेपन से बचने और 'अपनापन' खोजने का एक जरिया।"], ["सोमा बुआ ने चूड़ियाँ पहनने के लिए पीछे के दरवाज़े का उपयोग क्यों किया?", "क्योंकि वे समाज और अपने पति की टोक से डरती और लजाती थीं।"], ["सोमा बुआ के मृत पुत्र का नाम क्या था?", "हरखू।"], ["संन्यासी पति ने विवाह में जाने के संबंध में बुआ को क्या चेतावनी दी थी?", "कि यदि बिना बुलाए गईं, तो परिणाम अच्छा नहीं होगा।"], ["कहानी में 'अदृश्य खलनायक' किसे माना गया है?", "पूरे समाज की उदासीन और उपेक्षापूर्ण सोच को।"], ["सोमा बुआ का अपनी साड़ी में कलफ (मांड) लगाना क्या दर्शाता है?", "विवाह में जाने के लिए उनका अत्यधिक उत्साह और सावधानी।"], ["लेखिका के अनुसार सोमा बुआ की जीभ कब सबसे अधिक सक्रिय होती थी?", "जब उनके पति घर आते थे (बहस और अपनी बात कहने के लिए)।"], ["सोमा बुआ के संदूक में कुल कितनी जमा पूँजी निकली थी?", "सात रुपये और कुछ रेज़गारी।"], ["सोमा बुआ की पीड़ा को 'शांत त्रासदी' क्यों कहा गया है?", "क्योंकि यह बिना किसी शोर या विरोध के व्यक्ति को भीतर से खोखला कर देती है।"], ["मन्नू भंडारी के किन्हीं दो प्रसिद्ध उपन्यासों के नाम बताइए।", "आपका बंटी' और 'महाभोज'।"], ["कहानी के अनुसार सोमा बुआ का व्यक्तित्व किन दो परतों में बँटा है?", "बाहरी सक्रियता और आंतरिक रिक्तता (शून्यता)।"], ["राधा भाभी ने सोमा बुआ को साड़ी रंगने के बाद क्या सलाह दी थी?", "साड़ी में चमक लाने के लिए मांड (कलफ) देने की सलाह।"], ["पितृसत्तात्मक समाज में एक स्त्री की पहचान किससे जुड़ी दिखाई गई है?", "उसके पति और पुत्र के अस्तित्व से।"], ["कहानी में 'पच्चीस वर्ष' का समय किस संदर्भ में आया है?", "सोमा बुआ के देवर की मृत्यु के बाद रिश्तेदारों से संबंध टूटने की अवधि।"], ["सोमा बुआ ने विवाह के लिए उपहारों को किस चीज़ में सजाया था?", "एक नई थाली और अपने हाथ से बुने हुए मेज़पोश में।"], ["अकेली' कहानी की भाषा शैली कैसी है?", "सरल, विश्वसनीय और बोलचाल की (Colloquial)।"], ["सोमा बुआ के अनुसार 'अपनापन' की कसौटी क्या है?", "जहाँ प्रेम हो, वहाँ बुलावे की प्रतीक्षा नहीं करनी चाहिए।"], ["कहानी का अंत होने पर सोमा बुआ का अंगीठी जलाना क्या संकेत देता है?", "उनकी फिर से उसी नीरस और अकेले जीवन में वापसी।"], ["मन्नू भंडारी ने इस कहानी के माध्यम से समाज को क्या संदेश दिया है?", "वृद्धों को सामाजिक कार्यों में शामिल करना उनके सम्मान के लिए आवश्यक है।"], ["सोमा बुआ की आँखों से आँसू कब निकल पड़े?", "जब पति ने उन्हें दूसरों के घर में 'टाँग अड़ाने' वाली कहा और कटु वचन बोले।"], ["कहानी में 'नयी-नवेली बहुओं' का उल्लेख किसलिए हुआ है?", "यह दिखाने के लिए कि अनुभव के बिना सामाजिक कार्य बिगड़ सकते हैं।"], ["सोमा बुआ की 'मौन पीड़ा' किसका दर्पण है?", "समाज की नैतिक विफलता और वृद्धों के प्रति संवेदनहीनता का।"], ["संन्यासी पति का 'विरक्त' होना किस प्रकार का परित्याग है?", "धार्मिक आड़ में अपनी पत्नी के प्रति जिम्मेदारी का त्याग।"], ["विवाह के मुहुर्त का समय क्या तय था?", "शाम के पाँच बजे।"], ["कहानी के अनुसार सोमा बुआ का दूसरों के यहाँ उत्सव में जाना क्या था?", "उनकी एक 'भावनात्मक ज़रूरत' (Emotional Necessity)।"], ["लेखिका ने सोमा बुआ के चरित्र को कैसा बताया है?", "एक जीवंत किंतु उपेक्षित व्यक्तित्व।"], ["मन्नू भंडारी की कहानियों में 'स्त्री-विमर्श' का क्या रूप दिखता है?", "स्त्री के आंतरिक संघर्ष और सामाजिक अलगाव का सूक्ष्म चित्रण।"], ["अकेली' शीर्षक की सार्थकता क्या है?", "यह बुआ की मानसिक, सामाजिक और पारिवारिक स्थिति का पूर्ण वर्णन करता है।"], ["सोमा बुआ की पीड़ा का मुख्य कारण क्या था?", "समाज द्वारा उनकी उपस्थिति को अनदेखा कर देना (Invisibility)।"], ["किशोरीलाल और उनकी बहुओं ने बुआ की प्रशंसा में क्या कहा?", "कि 'अम्माँ! तुमने आज लाज रख ली'।"], ["कहानी का अंतिम दृश्य पाठकों पर क्या प्रभाव छोड़ता है?", "यह पाठकों को आत्म-मंथन और वृद्धों के प्रति सहानुभूति के लिए प्रेरित करता है।"]];
+let deck=[...DATA.keys()],idx=0;
+const $=id=>document.getElementById(id);
+function render(){
+  const c=DATA[deck[idx]];
+  $("qtext").textContent=c[0];
+  $("atext").textContent=c[1];
+  $("card").classList.remove("flipped");
+  $("prev").disabled=idx===0;
+  $("next").disabled=idx===deck.length-1;
+  $("pf").style.width=((idx+1)/deck.length*100)+"%";
+  $("pl").textContent=(idx+1)+" / "+deck.length;
+}
+function go(d){if(idx+d>=0&&idx+d<deck.length){idx+=d;render()}}
+function shuffle(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*i+1|0;[deck[i],deck[j]]=[deck[j],deck[i]]}idx=0;render()}
+$("scene").addEventListener("click",()=>$("card").classList.toggle("flipped"));
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")go(-1);
+  else if(e.key==="ArrowRight")go(1);
+  else if(e.code==="Space"){e.preventDefault();$("card").classList.toggle("flipped")}
+});
+render();
+</script>
+</body>
+</html>
